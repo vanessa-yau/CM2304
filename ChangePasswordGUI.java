@@ -15,7 +15,7 @@ public class ChangePasswordGUI extends javax.swing.JFrame {
     /**
      * Creates new form ChangePassword
      */
-    public ChangePassword() {
+    public ChangePasswordGUI() {
         initComponents();
     }
 
