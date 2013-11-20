@@ -15,7 +15,7 @@ public class MainMenuGUI extends javax.swing.JFrame {
     /**
      * Creates new form MainMenu
      */
-    public MainMenu() {
+    public MainMenuGUI() {
         initComponents();
     }
 
