@@ -1,0 +1,46 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package ELO_application;
+
+/**
+ *
+ * @author fibonacci
+ */
+
+import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+
+public class testLogin {
+        
+    public static void main(String[] args) throws SQLException, NoSuchAlgorithmException{
+        LoginSecurity login = new LoginSecurity();
+        String uName = "letsibogo";
+        String uPass = "ramadi";
+        String host = "jdbc:derby://localhost:1527/credentialsDB";
+        
+        //establish connection
+        Connection con = DriverManager.getConnection( host, uName, uPass );
+        
+        //ADD NEW USER
+       // login.createUser(con, "James Bond", "bond_M.I.6");
+             
+        
+        //TEST LOGIN
+        
+       if(login.authenticate(con, "James Bond", "bond_M.I.6")){
+           System.out.println("LOGIN SUCCESS!!");
+       }else{System.out.println("LOGIN FAILED!!");}
+        
+        
+        
+        
+    }
+    
+}
