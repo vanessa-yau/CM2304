@@ -154,14 +154,21 @@ public class EmailAttachmentReceiver {
                 	int numberOfParts = multiPart.getCount();
                 	for (int partCount = 0; partCount < numberOfParts; partCount++) {
                             MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
-                            if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
+                            String partContentType = part.getContentType();
+                            partContentType = partContentType.substring(0, 11);
+                            if (partContentType.equalsIgnoreCase("APPLICATION")) {
                         	
                                 // this part is attachment
-                                    String fileName = part.getFileName();
-                                    attachFiles += fileName + ", ";
+                                String fileName = part.getFileName();
+                                attachFiles += fileName + ", ";
+                                
+                                if (fileName.contains("/")) {
                                     int cutOff = fileName.lastIndexOf("/");
                                     fileName = fileName.substring(cutOff);
-                                    part.saveFile(saveDirectory + fileName);
+                                }
+                                
+                                fileName = "/" + fileName;
+                                part.saveFile(saveDirectory + fileName);
                             } 
                                 
                             else {
@@ -192,7 +199,7 @@ public class EmailAttachmentReceiver {
                 // On the off-chance we get a HTML e-mail
                 // Haven't got it to work yet, but when/ if I do I'll upload a revised version
                 else if (contentType.contains("text/html")) {
-                		
+                    
                     Object content = message.getContent();
                     if (content != null) {
                 	messageContent = content.toString();
@@ -220,14 +227,14 @@ public class EmailAttachmentReceiver {
     	
         //String port = "993";
         EmailAttachmentReceiver receiver = new EmailAttachmentReceiver();
-        receiver.setDateFrom("2013/12/10");
+        receiver.setDateFrom("2014/01/04");
         receiver.setLoginDetails("chickentika99@gmail.com", "password97");
         receiver.connect();
         receiver.readInbox();
-        System.out.println(receiver.getFromAddress());
-        System.out.println(receiver.getSubject());
-        System.out.println(receiver.getDate());
-        //receiver.downloadAttachment("/Users/Pharaoh/Dropbox/Dump");
+        //System.out.println(receiver.getFromAddress());
+        //System.out.println(receiver.getSubject());
+        //System.out.println(receiver.getDate());
+        receiver.downloadAttachment("/Users/Pharaoh/Dropbox/Dump");
  
     }
 }
