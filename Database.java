@@ -377,6 +377,243 @@ public class Database {
 	}
 	
 	/*
+	 * Gets modules name from the database if the search term matches the search attribute
+	 * eg. first name = Bob
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return String Returns the module name if found or strings of "" if not found
+	 */
+	public String getModuleName(String searchAttribute, String searchValue)
+	{
+		String[] moduleInfo = getModule(searchAttribute, searchValue);
+		return moduleInfo[0];
+	}
+	
+	/*
+	 * Gets module code name from the database if the search term matches the search attribute
+	 * eg. first name = Bob
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return String Returns the module code if found or strings of "" if not found
+	 */
+	public String getModuleCode(String searchAttribute, String searchValue)
+	{
+		String[] moduleInfo = getModule(searchAttribute, searchValue);
+		return moduleInfo[1];
+	}
+	
+	/*
+	 * Gets module credits from the database if the search term matches the search attribute
+	 * eg. first name = Bob
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return int Returns the module credits and -1 if not found
+	 */
+	public int getModuleCredits(String searchAttribute, String searchValue)
+	{
+		String[] moduleInfo = getModule(searchAttribute, searchValue);
+		return Integer.parseInt(moduleInfo[2]);
+	}
+	
+	/*
+	 * Gets modules user roles from the database if the search term matches the search attribute
+	 * eg. first name = Bob
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return String Returns the modules user roles if found or strings of "" if not found
+	 */
+	public String getModuleUserRole(String searchAttribute, String searchValue)
+	{
+		String[] moduleInfo = getModule(searchAttribute, searchValue);
+		return moduleInfo[3];
+	}
+	
+	/*
+	 * Gets number of courseworks for a module from the database if the search term matches the search attribute
+	 * eg. module name = Database Systems
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return int Returns the number of courseworks and -1 if not found
+	 */
+	public int getNumCoursework(String searchAttribute, String searchValue)
+	{
+		String[] moduleInfo = getModule(searchAttribute, searchValue);
+		return Integer.parseInt(moduleInfo[4]);
+	}
+	
+	/*
+	 * Gets number of exams for a module from the database if the search term matches the search attribute
+	 * eg. first name = Bob
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return int Returns the number of exams and -1 if not found
+	 */
+	public int getNumExams(String searchAttribute, String searchValue)
+	{
+		String[] moduleInfo = getModule(searchAttribute, searchValue);
+		return Integer.parseInt(moduleInfo[5]);
+	}
+	
+	
+	/*
+	 * Gets whether a module has exams from the database if the search term matches the search attribute
+	 * eg. first name = Bob
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return boolean Returns true if module has exam or false otherwise
+	 */
+	public boolean getModuleHasExam(String searchAttribute, String searchValue)
+	{
+		String[] moduleInfo = getModule(searchAttribute, searchValue);
+		if(moduleInfo[5].compareToIgnoreCase("true") == 0)
+			return true;
+		
+		return false;
+	}
+	
+	/*
+	 * Gets whether a module has coursework from the database if the search term matches the search attribute
+	 * eg. first name = Bob
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return  boolean Returns true if module has coursework or false otherwise
+	 */
+	public boolean getModuleHasCoursework(String searchAttribute, String searchValue)
+	{
+		String[] moduleInfo = getModule(searchAttribute, searchValue);
+		if(moduleInfo[6].compareToIgnoreCase("true") == 0)
+			return true;
+		
+		return false;
+	}
+	
+	/*
+	 * Gets module task deadline from the database if the search term matches the search attribute
+	 * eg. module name = Database Systems
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return String Returns the module task deadline if found or strings of "" if not found
+	 */
+	public String getModuleTaskDeadline(String searchAttribute, String searchValue)
+	{
+		String[] moduleInfo = getModule(searchAttribute, searchValue);
+		return moduleInfo[8];
+	}
+	
+
+	
+	/*
+	 * Gets all module information from the database if the search term matches the search attribute
+	 * eg. first name = Bob
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return String[] Returns an array of strings containing the information if found or strings of "" if not found
+	 * [0] = module name; [1] = module code; [2] = credits; [3] = user role; [4] = num coursework; [5] = num exmas
+	 * [6] = exam paper; [7] = coursework; [8] = task deadline
+	 */
+	public String[] getModule(String searchAttribute, String searchValue)
+	{
+		String[] module = new String[9];
+		
+		int attribute = 0;
+		
+		if(searchAttribute.compareToIgnoreCase("module name") == 0)
+		{
+			attribute = 0;
+		}
+		else if(searchAttribute.compareToIgnoreCase("module code") == 0)
+		{
+			attribute = 1;
+		}
+		else if(searchAttribute.compareToIgnoreCase("credits") == 0)
+		{
+			attribute = 2;
+		}
+		else if(searchAttribute.compareToIgnoreCase("user role") == 0)
+		{
+			attribute = 3;
+		}
+		else if(searchAttribute.compareToIgnoreCase("num coursework") == 0)
+		{
+			attribute = 4;
+		}
+		else if(searchAttribute.compareToIgnoreCase("num exams") == 0)
+		{
+			attribute = 5;
+		}
+		else if(searchAttribute.compareToIgnoreCase("exam paper") == 0)
+		{
+			attribute = 6;
+		}
+		else if(searchAttribute.compareToIgnoreCase("coursework") == 0)
+		{
+			attribute = 7;
+		}		
+		else if(searchAttribute.compareToIgnoreCase("task deadline") == 0)
+		{
+			attribute = 8;
+		}
+		
+		boolean found = false;
+		while(fileReader.hasNext() && !found)
+		{
+			
+			int commaCount = 0;
+			String line = fileReader.nextLine();
+			String word = "";
+			for(int i=0; i < line.length(); i++)
+			{
+				if(line.charAt(i) == ',' || line.charAt(i) == ';')
+				{
+					
+					if(attribute == commaCount)
+					{
+						
+						if(word.compareToIgnoreCase(searchValue) == 0)
+						{
+							found = true;
+						}
+					}
+					
+					module[commaCount] = word;
+					word = "";
+					commaCount++;
+				}
+				else
+				{
+					word += line.charAt(i);
+				}
+				
+				
+				
+			}
+
+			
+		}
+		
+		if(!found)
+		{
+			for(int i=0; i < 9; i++)
+				module[i] = "";
+		}
+		
+		resetFileReader();
+		
+		return module;
+	}
+	
+	
+	/*
 	 * Resets the file reader so that the file can be read again
 	 * (I couldn't get the normal reset function on the Scanner to work)
 	 */
