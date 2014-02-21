@@ -14,7 +14,6 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.NoSuchProviderException;
-import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.internet.MimeBodyPart;
@@ -65,6 +64,26 @@ public class EmailAttachmentReceiver {
             
             else if (userName.contains("@cardiff")) {
             	store.connect("outlook.office365.com", userName, password);
+            }
+            
+            else if (userName.contains("@aol")) {
+            	store.connect("imap.aol.com", userName, password);
+            }
+            
+            else if (userName.contains("@hotmail")) {
+            	store.connect("imap-mail.outlook.com", userName, password);
+            }
+            
+            else if (userName.contains("@yahoo")) {
+            	store.connect("imap.mail.yahoo.com", userName, password);
+            }
+            
+            else if (userName.contains("@btinternet")) {
+            	store.connect("mail.btinternet.com", userName, password);
+            }
+            
+            else if (userName.contains("@virginmedia")) {
+            	store.connect("imap.virginmedia.com", userName, password);
             }
         }
         
