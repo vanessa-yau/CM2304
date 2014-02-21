@@ -387,7 +387,7 @@ public class Database {
 	 * @param staffID String Staffs ID
 	 * @return boolean Returns true if the staff was successfully inserted and false otherwise
 	 */
-	public boolean insertModule(String moduleName, String moduleCode, String moduleCredits, String numCoursework, String numExams, String moduleLeader)
+	public boolean insertModule(String moduleName, String moduleCode, String moduleCredits, String numCoursework, String numExams, String moduleLeader, String formType)
 	{
 		fileReader.close();
 		
@@ -400,7 +400,7 @@ public class Database {
 		{
 			e.printStackTrace();
 		}
-		fileWriter.println(moduleName+","+moduleCode+","+moduleCredits+","+numCoursework+","+numExams+","+moduleLeader+";");
+		fileWriter.println(moduleName+","+moduleCode+","+moduleCredits+","+numCoursework+","+numExams+","+moduleLeader+","+formType+";");
 		fileWriter.close();
 		
 		resetFileReader();
@@ -443,6 +443,10 @@ public class Database {
 		else if(searchAttribute.compareToIgnoreCase("module leader") == 0)
 		{
 			attribute = 5;
+		}
+		else if(searchAttribute.compareToIgnoreCase("form type") == 0)
+		{
+			attribute = 6;
 		}
 
 		
@@ -623,6 +627,12 @@ public class Database {
 		String[] moduleInfo = getModule(searchAttribute, searchValue);
 		return moduleInfo[5];
 	}
+	
+	public String getFormType(String searchAttribute, String searchValue)
+	{
+		String[] moduleInfo = getModule(searchAttribute, searchValue);
+		return moduleInfo[6];
+	}
 
 	
 
@@ -639,7 +649,7 @@ public class Database {
 	 */
 	public String[] getModule(String searchAttribute, String searchValue)
 	{
-		String[] module = new String[6];
+		String[] module = new String[7];
 		
 		int attribute = 0;
 		
@@ -667,6 +677,10 @@ public class Database {
 		{
 			attribute = 5;
 		}
+		else if(searchAttribute.compareToIgnoreCase("form type") == 0)
+		{
+			attribute = 6;
+		}
 		
 		boolean found = false;
 		while(fileReader.hasNext() && !found)
@@ -707,7 +721,7 @@ public class Database {
 		
 		if(!found)
 		{
-			for(int i=0; i < 9; i++)
+			for(int i=0; i < 7; i++)
 				module[i] = "";
 		}
 		
@@ -716,7 +730,7 @@ public class Database {
 		return module;
 	}
 	
-	public boolean insertAssessmentPaper(String moduleCode, String formType, String paperName, String ELODeadline,
+	public boolean insertAssessmentPaper(String moduleCode, String paperName, String ELODeadline,
 										String EMDeadline, String MLDeadline, String IMDeadline, String EM_ID, String IM_ID)
 	{
 		fileReader.close();
@@ -730,7 +744,7 @@ public class Database {
 		{
 			e.printStackTrace();
 		}
-		fileWriter.println(moduleCode+","+formType+","+paperName+","+ELODeadline+","+EMDeadline+","+MLDeadline+","+IMDeadline+","+EM_ID+","+IM_ID+";");
+		fileWriter.println(moduleCode+","+paperName+","+ELODeadline+","+EMDeadline+","+MLDeadline+","+IMDeadline+","+EM_ID+","+IM_ID+";");
 		fileWriter.close();
 		
 		resetFileReader();
@@ -739,7 +753,7 @@ public class Database {
 	
 	public String[] getAssessmentPapers(String searchAttribute, String searchValue)
 	{
-		String[] module = new String[9];
+		String[] module = new String[8];
 		
 		int attribute = 0;
 		
@@ -747,37 +761,33 @@ public class Database {
 		{
 			attribute = 0;
 		}
-		else if(searchAttribute.compareToIgnoreCase("form type") == 0)
+		else if(searchAttribute.compareToIgnoreCase("paper name") == 0)
 		{
 			attribute = 1;
 		}
-		else if(searchAttribute.compareToIgnoreCase("paper name") == 0)
+		else if(searchAttribute.compareToIgnoreCase("ELO deadline") == 0)
 		{
 			attribute = 2;
 		}
-		else if(searchAttribute.compareToIgnoreCase("ELO deadline") == 0)
+		else if(searchAttribute.compareToIgnoreCase("EM deadline") == 0)
 		{
 			attribute = 3;
 		}
-		else if(searchAttribute.compareToIgnoreCase("EM deadline") == 0)
+		else if(searchAttribute.compareToIgnoreCase("ML deadline") == 0)
 		{
 			attribute = 4;
 		}
-		else if(searchAttribute.compareToIgnoreCase("ML deadline") == 0)
+		else if(searchAttribute.compareToIgnoreCase("IM deadline") == 0)
 		{
 			attribute = 5;
 		}
-		else if(searchAttribute.compareToIgnoreCase("IM deadline") == 0)
+		else if(searchAttribute.compareToIgnoreCase("EM ID") == 0)
 		{
 			attribute = 6;
 		}
-		else if(searchAttribute.compareToIgnoreCase("EM ID") == 0)
-		{
-			attribute = 7;
-		}
 		else if(searchAttribute.compareToIgnoreCase("IM ID") == 0)
 		{
-			attribute = 8;
+			attribute = 7;
 		}
 		
 		boolean found = false;
@@ -819,7 +829,7 @@ public class Database {
 		
 		if(!found)
 		{
-			for(int i=0; i < 9; i++)
+			for(int i=0; i < 8; i++)
 				module[i] = "";
 		}
 		
@@ -831,56 +841,50 @@ public class Database {
 	
 	public String getModuleCodeAssessmentPaper(String searchAttribute, String searchValue)
 	{
-		String[] moduleInfo = getModule(searchAttribute, searchValue);
+		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
 		return moduleInfo[0];
-	}
-	
-	public String getFormType(String searchAttribute, String searchValue)
-	{
-		String[] moduleInfo = getModule(searchAttribute, searchValue);
-		return moduleInfo[1];
 	}
 	
 	public String getPaperName(String searchAttribute, String searchValue)
 	{
-		String[] moduleInfo = getModule(searchAttribute, searchValue);
-		return moduleInfo[2];
+		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
+		return moduleInfo[1];
 	}
 	
 	public String getELODeadline(String searchAttribute, String searchValue)
 	{
-		String[] moduleInfo = getModule(searchAttribute, searchValue);
-		return moduleInfo[3];
+		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
+		return moduleInfo[2];
 	}
 	
 	public String getEMDeadline(String searchAttribute, String searchValue)
 	{
-		String[] moduleInfo = getModule(searchAttribute, searchValue);
-		return moduleInfo[4];
+		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
+		return moduleInfo[3];
 	}
 	
 	public String getMLDeadline(String searchAttribute, String searchValue)
 	{
-		String[] moduleInfo = getModule(searchAttribute, searchValue);
-		return moduleInfo[5];
+		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
+		return moduleInfo[4];
 	}
 	
 	public String getIMDeadline(String searchAttribute, String searchValue)
 	{
-		String[] moduleInfo = getModule(searchAttribute, searchValue);
-		return moduleInfo[6];
+		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
+		return moduleInfo[5];
 	}
 	
 	public String getEMID(String searchAttribute, String searchValue)
 	{
-		String[] moduleInfo = getModule(searchAttribute, searchValue);
-		return moduleInfo[7];
+		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
+		return moduleInfo[6];
 	}
 	
 	public String getIMID(String searchAttribute, String searchValue)
 	{
-		String[] moduleInfo = getModule(searchAttribute, searchValue);
-		return moduleInfo[8];
+		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
+		return moduleInfo[7];
 	}
 	
 	
