@@ -53,7 +53,7 @@ public class Database {
 	 * @param staffID String Staffs ID
 	 * @return boolean Returns true if the staff was successfully inserted and false otherwise
 	 */
-	public boolean insertStaff(String fName, String lName, String email, String number, String password, String staffID, String staffRole)
+	public boolean insertStaff(String fName, String lName, String email, String number, String staffID, String staffRole)
 	{
 		fileReader.close();
 		
@@ -66,7 +66,7 @@ public class Database {
 		{
 			e.printStackTrace();
 		}
-		fileWriter.println(fName+","+lName+","+email+","+number+","+password+","+staffID+staffRole+";");
+		fileWriter.println(fName+","+lName+","+email+","+number+","+staffID+staffRole+";");
 		fileWriter.close();
 		
 		resetFileReader();
@@ -102,17 +102,13 @@ public class Database {
 		{
 			attribute = 3;
 		}
-		else if(searchAttribute.compareToIgnoreCase("password") == 0)
+		else if(searchAttribute.compareToIgnoreCase("staffID") == 0)
 		{
 			attribute = 4;
 		}
-		else if(searchAttribute.compareToIgnoreCase("staffID") == 0)
-		{
-			attribute = 5;
-		}
 		else if(searchAttribute.compareToIgnoreCase("staff role") == 0)
 		{
-			attribute = 6;
+			attribute = 5;
 		}
 		
 		boolean found = false;
@@ -265,20 +261,6 @@ public class Database {
 	}
 	
 	/*
-	 * Gets staffs password from the database if the search term matches the search attribute
-	 * eg. first name = Bob
-	 * 
-	 * @param searchAttribute String The attribute you're searching
-	 * @param searchValue String The value you're searching the attribute for
-	 * @return String Returns the password if found or strings of "" if not found
-	 */
-	public String getStaffPassword(String searchAttribute, String searchValue)
-	{
-		String[] staffInfo = getStaff(searchAttribute, searchValue);
-		return staffInfo[4];
-	}
-	
-	/*
 	 * Gets staffs ID from the database if the search term matches the search attribute
 	 * eg. first name = Bob
 	 * 
@@ -289,7 +271,7 @@ public class Database {
 	public String getStaffID(String searchAttribute, String searchValue)
 	{
 		String[] staffInfo = getStaff(searchAttribute, searchValue);
-		return staffInfo[5];
+		return staffInfo[4];
 	}
 
 	/*
@@ -303,7 +285,7 @@ public class Database {
 	public String getStaffRole(String searchAttribute, String searchValue)
 	{
 		String[] staffInfo = getStaff(searchAttribute, searchValue);
-		return staffInfo[6];
+		return staffInfo[5];
 	}
 	
 	
@@ -318,7 +300,7 @@ public class Database {
 	 */
 	public String[] getStaff(String searchAttribute, String searchValue)
 	{
-		String[] staff = new String[7];
+		String[] staff = new String[6];
 		
 		int attribute = 0;
 		
@@ -338,17 +320,13 @@ public class Database {
 		{
 			attribute = 3;
 		}
-		else if(searchAttribute.compareToIgnoreCase("password") == 0)
+		else if(searchAttribute.compareToIgnoreCase("staffID") == 0)
 		{
 			attribute = 4;
 		}
-		else if(searchAttribute.compareToIgnoreCase("staffID") == 0)
-		{
-			attribute = 5;
-		}
 		else if(searchAttribute.compareToIgnoreCase("staff role") == 0)
 		{
-			attribute = 6;
+			attribute = 5;
 		}
 		
 		boolean found = false;
@@ -942,7 +920,7 @@ public class Database {
 		//d.insertStaff("Aly", "Sheriff", "kingtut@pharoahpower.com", "11111", "egyptrules", "Tut");
 		//d.insertStaff("Mez", "Gangbanger", "kingofrape@ianwatkins.com", "5678987", "kids", "Kids101");
 		String a = d.getStaffFirstName("staffID", "TitS");
-		String b = d.getStaffPassword("email", "kingtut@pharoahpower.com");
+		String b = "";
 		System.out.println(a);
 		System.out.println(b);
 		String mez = d.getStaffEmail("first name", "mez");
