@@ -3,22 +3,25 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.Scanner;
 
 
 public class Database {
-	
+
 	String filePath;
 	Scanner fileReader;
-	
-	
+
+
 	public Database()
 	{
-		
+
 	}
-	
+
 	/*
 	 * Initialises the database
 	 * @param path String The file path of the database
@@ -26,9 +29,9 @@ public class Database {
 	 */
 	public boolean initDatabase(String path)
 	{
-		
+
 		filePath = path;
-		
+
 		try 
 		{
 			fileReader = new Scanner( new File(filePath));
@@ -38,9 +41,96 @@ public class Database {
 			e.printStackTrace();
 			return false;
 		}
-		
+
 		return true;
-		
+
+	}
+
+	// http://stackoverflow.com/questions/453018/number-of-lines-in-a-file-in-java
+	public int countFileLines(String filename) throws IOException {
+		InputStream is = new BufferedInputStream(new FileInputStream(filename));
+		try {
+			byte[] c = new byte[1024];
+			int count = 0;
+			int readChars = 0;
+			boolean empty = true;
+			while ((readChars = is.read(c)) != -1) {
+				empty = false;
+				for (int i = 0; i < readChars; ++i) {
+					if (c[i] == '\n') {
+						++count;
+					}
+				}
+			}
+			return (count == 0 && !empty) ? 1 : count;
+		} 
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return -1;
+		}
+		finally 
+		{
+			is.close();
+		}
+	}
+
+	public String[][] getAllStaff()
+	{
+		try
+		{
+			int totalLineCount = countFileLines("staff.txt");
+			String[][] allStaff = new String[totalLineCount][6];
+			for( int i=0; i<totalLineCount; i++ )
+			{
+				String line = fileReader.nextLine();
+				String[] parts = line.split(",");
+				parts[5] = parts[5].substring(0, parts[5].length()-1);
+				allStaff[i][0] = parts[0];
+				allStaff[i][1] = parts[1];
+				allStaff[i][2] = parts[2];
+				allStaff[i][3] = parts[3];
+				allStaff[i][4] = parts[4];
+				allStaff[i][5] = parts[5];
+			}
+			return allStaff;
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public String[][] getAllForms(String filename)
+	{
+		try
+		{
+			int totalLineCount = countFileLines("forms.txt");
+			String[][] allForms = new String[totalLineCount][6];
+			for( int i=0; i<totalLineCount; i++ )
+			{
+				String line = fileReader.nextLine();
+				
+				//[0] moduleCode; [1] paperName; [2] ELODeadline; [3] EMDeadline; [4] MLDeadline; [5] IMDeadline; [6] EM_ID; [7] IM_ID
+				String[] parts = line.split(",");
+				parts[7] = parts[7].substring(0, parts[7].length()-1);
+				allForms[i][0] = parts[0];
+				allForms[i][1] = parts[1];
+				allForms[i][2] = parts[2];
+				allForms[i][3] = parts[3];
+				allForms[i][4] = parts[4];
+				allForms[i][5] = parts[5];
+				allForms[i][6] = parts[6];
+				allForms[i][7] = parts[7];
+			}
+			return allForms;
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+			return null;
+		}
 	}
 	
 	/*
@@ -56,7 +146,7 @@ public class Database {
 	public boolean insertStaff(String fName, String lName, String email, String number, String staffID, String staffRole)
 	{
 		fileReader.close();
-		
+
 		PrintWriter fileWriter = null;
 		try 
 		{
@@ -66,13 +156,13 @@ public class Database {
 		{
 			e.printStackTrace();
 		}
-		fileWriter.println(fName+","+lName+","+email+","+number+","+staffID+staffRole+";");
+		fileWriter.println(fName+","+lName+","+email+","+number+","+staffID+","+staffRole+";");
 		fileWriter.close();
-		
+
 		resetFileReader();
 		return true;
 	}
-	
+
 	/*
 	 * Deletes staff from the database if the search term matches the search attribute
 	 * eg. first name = Bob
@@ -83,9 +173,9 @@ public class Database {
 	 */
 	public boolean deleteStaff(String searchAttribute, String searchValue)
 	{
-		
+
 		int attribute = 0;
-		
+
 		if(searchAttribute.compareToIgnoreCase("first name") == 0)
 		{
 			attribute = 0;
@@ -110,14 +200,14 @@ public class Database {
 		{
 			attribute = 5;
 		}
-		
+
 		boolean found = false;
 		int lineNo = 0;
 		int deleteNo = 0;
 		int lineCount = 0;
 		while(fileReader.hasNext())
 		{
-			
+
 			int commaCount = 0;
 			String line = fileReader.nextLine();
 			lineCount++;
@@ -126,18 +216,18 @@ public class Database {
 			{
 				if(line.charAt(i) == ',' || line.charAt(i) == ';')
 				{
-					
+
 					if(attribute == commaCount)
 					{
-						
+
 						if(word.compareToIgnoreCase(searchValue) == 0)
 						{
 							found = true;
 							deleteNo = lineNo;
-							
+
 						}
 					}
-	
+
 					word = "";
 					commaCount++;
 				}
@@ -145,24 +235,24 @@ public class Database {
 				{
 					word += line.charAt(i);
 				}
-				
-				
-				
+
+
+
 			}
-			
+
 			lineNo++;
 		}
-		
+
 		if(!found)
 			return false;
-	
-		
-	
-		
+
+
+
+
 		String[] lines = new String[lineCount-1];
 		int count = 0;
 		int linesIn = 0;
-		
+
 		resetFileReader();
 		while(fileReader.hasNext() && count != lineCount)
 		{
@@ -173,12 +263,12 @@ public class Database {
 				linesIn++;
 				System.out.println(lines[linesIn-1]);
 			}
-			
+
 			count++;
 		}
-		
+
 		fileReader.close();
-		
+
 		PrintWriter writer = null;
 		try
 		{
@@ -192,18 +282,18 @@ public class Database {
 		{
 			e.printStackTrace();
 		}
-		
+
 		for(int i=0; i < lineCount-1; i++)
 		{
 			writer.println(lines[i]);
 		}
-		
+
 		writer.close();
 		resetFileReader();
-		
+
 		return true;
 	}
-	
+
 	/*
 	 * Gets staffs first name from the database if the search term matches the search attribute
 	 * eg. first name = Bob
@@ -217,7 +307,7 @@ public class Database {
 		String[] staffInfo = getStaff(searchAttribute, searchValue);
 		return staffInfo[0];
 	}
-	
+
 	/*
 	 * Gets staffs last name from the database if the search term matches the search attribute
 	 * eg. first name = Bob
@@ -231,7 +321,7 @@ public class Database {
 		String[] staffInfo = getStaff(searchAttribute, searchValue);
 		return staffInfo[1];
 	}
-	
+
 	/*
 	 * Gets staffs email from the database if the search term matches the search attribute
 	 * eg. first name = Bob
@@ -245,7 +335,7 @@ public class Database {
 		String[] staffInfo = getStaff(searchAttribute, searchValue);
 		return staffInfo[2];
 	}
-	
+
 	/*
 	 * Gets staffs number from the database if the search term matches the search attribute
 	 * eg. first name = Bob
@@ -259,7 +349,7 @@ public class Database {
 		String[] staffInfo = getStaff(searchAttribute, searchValue);
 		return staffInfo[3];
 	}
-	
+
 	/*
 	 * Gets staffs ID from the database if the search term matches the search attribute
 	 * eg. first name = Bob
@@ -287,8 +377,8 @@ public class Database {
 		String[] staffInfo = getStaff(searchAttribute, searchValue);
 		return staffInfo[5];
 	}
-	
-	
+
+
 	/*
 	 * Gets all staff information from the database if the search term matches the search attribute
 	 * eg. first name = Bob
@@ -301,9 +391,9 @@ public class Database {
 	public String[] getStaff(String searchAttribute, String searchValue)
 	{
 		String[] staff = new String[6];
-		
+
 		int attribute = 0;
-		
+
 		if(searchAttribute.compareToIgnoreCase("first name") == 0)
 		{
 			attribute = 0;
@@ -328,11 +418,11 @@ public class Database {
 		{
 			attribute = 5;
 		}
-		
+
 		boolean found = false;
 		while(fileReader.hasNext() && !found)
 		{
-			
+
 			int commaCount = 0;
 			String line = fileReader.nextLine();
 			String word = "";
@@ -340,16 +430,16 @@ public class Database {
 			{
 				if(line.charAt(i) == ',' || line.charAt(i) == ';')
 				{
-					
+
 					if(attribute == commaCount)
 					{
-						
+
 						if(word.compareToIgnoreCase(searchValue) == 0)
 						{
 							found = true;
 						}
 					}
-					
+
 					staff[commaCount] = word;
 					word = "";
 					commaCount++;
@@ -358,25 +448,25 @@ public class Database {
 				{
 					word += line.charAt(i);
 				}
-				
-				
-				
+
+
+
 			}
 
-			
+
 		}
-		
+
 		if(!found)
 		{
 			for(int i=0; i < 6; i++)
 				staff[i] = "";
 		}
-		
+
 		resetFileReader();
-		
+
 		return staff;
 	}
-	
+
 	/*
 	 * Inserts a new staff into the database
 	 * @param fName String Staffs first name
@@ -390,7 +480,7 @@ public class Database {
 	public boolean insertModule(String moduleName, String moduleCode, String moduleCredits, String numCoursework, String numExams, String moduleLeader, String formType)
 	{
 		fileReader.close();
-		
+
 		PrintWriter fileWriter = null;
 		try 
 		{
@@ -402,11 +492,11 @@ public class Database {
 		}
 		fileWriter.println(moduleName+","+moduleCode+","+moduleCredits+","+numCoursework+","+numExams+","+moduleLeader+","+formType+";");
 		fileWriter.close();
-		
+
 		resetFileReader();
 		return true;
 	}
-	
+
 	/*
 	 * Deletes staff from the database if the search term matches the search attribute
 	 * eg. first name = Bob
@@ -417,9 +507,9 @@ public class Database {
 	 */
 	public boolean deleteModule(String searchAttribute, String searchValue)
 	{
-		
+
 		int attribute = 0;
-		
+
 		if(searchAttribute.compareToIgnoreCase("module name") == 0)
 		{
 			attribute = 0;
@@ -449,14 +539,14 @@ public class Database {
 			attribute = 6;
 		}
 
-		
+
 		boolean found = false;
 		int lineNo = 0;
 		int deleteNo = 0;
 		int lineCount = 0;
 		while(fileReader.hasNext())
 		{
-			
+
 			int commaCount = 0;
 			String line = fileReader.nextLine();
 			lineCount++;
@@ -465,18 +555,18 @@ public class Database {
 			{
 				if(line.charAt(i) == ',' || line.charAt(i) == ';')
 				{
-					
+
 					if(attribute == commaCount)
 					{
-						
+
 						if(word.compareToIgnoreCase(searchValue) == 0)
 						{
 							found = true;
 							deleteNo = lineNo;
-							
+
 						}
 					}
-	
+
 					word = "";
 					commaCount++;
 				}
@@ -484,24 +574,24 @@ public class Database {
 				{
 					word += line.charAt(i);
 				}
-				
-				
-				
+
+
+
 			}
-			
+
 			lineNo++;
 		}
-		
+
 		if(!found)
 			return false;
-	
-		
-	
-		
+
+
+
+
 		String[] lines = new String[lineCount-1];
 		int count = 0;
 		int linesIn = 0;
-		
+
 		resetFileReader();
 		while(fileReader.hasNext() && count != lineCount)
 		{
@@ -512,12 +602,12 @@ public class Database {
 				linesIn++;
 				System.out.println(lines[linesIn-1]);
 			}
-			
+
 			count++;
 		}
-		
+
 		fileReader.close();
-		
+
 		PrintWriter writer = null;
 		try
 		{
@@ -531,18 +621,18 @@ public class Database {
 		{
 			e.printStackTrace();
 		}
-		
+
 		for(int i=0; i < lineCount-1; i++)
 		{
 			writer.println(lines[i]);
 		}
-		
+
 		writer.close();
 		resetFileReader();
-		
+
 		return true;
 	}
-	
+
 	/*
 	 * Gets modules name from the database if the search term matches the search attribute
 	 * eg. first name = Bob
@@ -556,7 +646,7 @@ public class Database {
 		String[] moduleInfo = getModule(searchAttribute, searchValue);
 		return moduleInfo[0];
 	}
-	
+
 	/*
 	 * Gets module code name from the database if the search term matches the search attribute
 	 * eg. first name = Bob
@@ -570,7 +660,7 @@ public class Database {
 		String[] moduleInfo = getModule(searchAttribute, searchValue);
 		return moduleInfo[1];
 	}
-	
+
 	/*
 	 * Gets module credits from the database if the search term matches the search attribute
 	 * eg. first name = Bob
@@ -584,8 +674,8 @@ public class Database {
 		String[] moduleInfo = getModule(searchAttribute, searchValue);
 		return Integer.parseInt(moduleInfo[2]);
 	}
-	
-	
+
+
 	/*
 	 * Gets number of courseworks for a module from the database if the search term matches the search attribute
 	 * eg. module name = Database Systems
@@ -599,7 +689,7 @@ public class Database {
 		String[] moduleInfo = getModule(searchAttribute, searchValue);
 		return Integer.parseInt(moduleInfo[3]);
 	}
-	
+
 	/*
 	 * Gets number of exams for a module from the database if the search term matches the search attribute
 	 * eg. first name = Bob
@@ -613,7 +703,7 @@ public class Database {
 		String[] moduleInfo = getModule(searchAttribute, searchValue);
 		return Integer.parseInt(moduleInfo[4]);
 	}
-	
+
 	/*
 	 * Gets number of exams for a module from the database if the search term matches the search attribute
 	 * eg. first name = Bob
@@ -627,16 +717,13 @@ public class Database {
 		String[] moduleInfo = getModule(searchAttribute, searchValue);
 		return moduleInfo[5];
 	}
-	
+
 	public String getFormType(String searchAttribute, String searchValue)
 	{
 		String[] moduleInfo = getModule(searchAttribute, searchValue);
 		return moduleInfo[6];
 	}
 
-	
-
-	
 	/*
 	 * Gets all module information from the database if the search term matches the search attribute
 	 * eg. first name = Bob
@@ -644,15 +731,15 @@ public class Database {
 	 * @param searchAttribute String The attribute you're searching
 	 * @param searchValue String The value you're searching the attribute for
 	 * @return String[] Returns an array of strings containing the information if found or strings of "" if not found
-	 * [0] = module name; [1] = module code; [2] = credits; [3] = staff role; [4] = num coursework; [5] = num exmas
-	 * [6] = exam paper; [7] = coursework; [8] = task deadline
+	 * [0] = module name; [1] = module code; [2] = credits; [3] = num coursework; [4] = num exams
+	 * [5] = module leader; [6] = form type
 	 */
 	public String[] getModule(String searchAttribute, String searchValue)
 	{
 		String[] module = new String[7];
-		
+
 		int attribute = 0;
-		
+
 		if(searchAttribute.compareToIgnoreCase("module name") == 0)
 		{
 			attribute = 0;
@@ -681,11 +768,11 @@ public class Database {
 		{
 			attribute = 6;
 		}
-		
+
 		boolean found = false;
 		while(fileReader.hasNext() && !found)
 		{
-			
+
 			int commaCount = 0;
 			String line = fileReader.nextLine();
 			String word = "";
@@ -693,16 +780,16 @@ public class Database {
 			{
 				if(line.charAt(i) == ',' || line.charAt(i) == ';')
 				{
-					
+
 					if(attribute == commaCount)
 					{
-						
+
 						if(word.compareToIgnoreCase(searchValue) == 0)
 						{
 							found = true;
 						}
 					}
-					
+
 					module[commaCount] = word;
 					word = "";
 					commaCount++;
@@ -711,30 +798,30 @@ public class Database {
 				{
 					word += line.charAt(i);
 				}
-				
-				
-				
+
+
+
 			}
 
-			
+
 		}
-		
+
 		if(!found)
 		{
 			for(int i=0; i < 7; i++)
 				module[i] = "";
 		}
-		
+
 		resetFileReader();
-		
+
 		return module;
 	}
-	
+
 	public boolean insertAssessmentPaper(String moduleCode, String paperName, String ELODeadline,
-										String EMDeadline, String MLDeadline, String IMDeadline, String EM_ID, String IM_ID)
+			String EMDeadline, String MLDeadline, String IMDeadline, String EM_ID, String IM_ID)
 	{
 		fileReader.close();
-		
+
 		PrintWriter fileWriter = null;
 		try 
 		{
@@ -746,17 +833,17 @@ public class Database {
 		}
 		fileWriter.println(moduleCode+","+paperName+","+ELODeadline+","+EMDeadline+","+MLDeadline+","+IMDeadline+","+EM_ID+","+IM_ID+";");
 		fileWriter.close();
-		
+
 		resetFileReader();
 		return true;
 	}
-	
+
 	public String[] getAssessmentPapers(String searchAttribute, String searchValue)
 	{
 		String[] module = new String[8];
-		
+
 		int attribute = 0;
-		
+
 		if(searchAttribute.compareToIgnoreCase("module code") == 0)
 		{
 			attribute = 0;
@@ -789,11 +876,11 @@ public class Database {
 		{
 			attribute = 7;
 		}
-		
+
 		boolean found = false;
 		while(fileReader.hasNext() && !found)
 		{
-			
+
 			int commaCount = 0;
 			String line = fileReader.nextLine();
 			String word = "";
@@ -801,16 +888,16 @@ public class Database {
 			{
 				if(line.charAt(i) == ',' || line.charAt(i) == ';')
 				{
-					
+
 					if(attribute == commaCount)
 					{
-						
+
 						if(word.compareToIgnoreCase(searchValue) == 0)
 						{
 							found = true;
 						}
 					}
-					
+
 					module[commaCount] = word;
 					word = "";
 					commaCount++;
@@ -819,75 +906,73 @@ public class Database {
 				{
 					word += line.charAt(i);
 				}
-				
-				
-				
+
+
+
 			}
 
-			
+
 		}
-		
+
 		if(!found)
 		{
 			for(int i=0; i < 8; i++)
 				module[i] = "";
 		}
-		
+
 		resetFileReader();
-		
+
 		return module;
 	}
-	
-	
+
 	public String getModuleCodeAssessmentPaper(String searchAttribute, String searchValue)
 	{
 		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
 		return moduleInfo[0];
 	}
-	
+
 	public String getPaperName(String searchAttribute, String searchValue)
 	{
 		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
 		return moduleInfo[1];
 	}
-	
+
 	public String getELODeadline(String searchAttribute, String searchValue)
 	{
 		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
 		return moduleInfo[2];
 	}
-	
+
 	public String getEMDeadline(String searchAttribute, String searchValue)
 	{
 		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
 		return moduleInfo[3];
 	}
-	
+
 	public String getMLDeadline(String searchAttribute, String searchValue)
 	{
 		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
 		return moduleInfo[4];
 	}
-	
+
 	public String getIMDeadline(String searchAttribute, String searchValue)
 	{
 		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
 		return moduleInfo[5];
 	}
-	
+
 	public String getEMID(String searchAttribute, String searchValue)
 	{
 		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
 		return moduleInfo[6];
 	}
-	
+
 	public String getIMID(String searchAttribute, String searchValue)
 	{
 		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
 		return moduleInfo[7];
 	}
-	
-	
+
 	/*
 	 * Resets the file reader so that the file can be read again
 	 * (I couldn't get the normal reset function on the Scanner to work)
@@ -898,14 +983,14 @@ public class Database {
 		try 
 		{
 			fileReader = new Scanner( new File(filePath));
-			
+
 		} 
 		catch (IOException e)
 		{
 			e.printStackTrace();
 		}
 	}
-	
+
 	/*
 	 * Closes all open I/O objects
 	 * MUST be called when database is finished being used
@@ -914,15 +999,15 @@ public class Database {
 	{
 		fileReader.close();
 	}
-	
 
 	public static void main(String[] args)
 	{
-		Database d = new Database();
+		/*Database d = new Database();
 		d.initDatabase("staff.txt");
-		//d.insertStaff("Simon", "Titcomb", "LOLNOPE@nah.com", "2345678986", "nahmate", "TitS");
-		//d.insertStaff("Aly", "Sheriff", "kingtut@pharoahpower.com", "11111", "egyptrules", "Tut");
-		//d.insertStaff("Mez", "Gangbanger", "kingofrape@ianwatkins.com", "5678987", "kids", "Kids101");
+		d.insertStaff("Simon", "Titcomb", "LOLNOPE@nah.com", "2345678986", "nahmate", "TitS");
+		d.insertStaff("Aly", "Sheriff", "kingtut@pharoahpower.com", "11111", "egyptrules", "Tut");
+		d.insertStaff("Mez", "Gangbanger", "kingofrape@ianwatkins.com", "5678987", "kids", "Kids101");
+		
 		String a = d.getStaffFirstName("staffID", "TitS");
 		String b = "";
 		System.out.println(a);
@@ -930,10 +1015,10 @@ public class Database {
 		String mez = d.getStaffEmail("first name", "mez");
 		System.out.println(mez);
 		System.out.println(d.deleteStaff("staffID","Tut"));
-		
+
 		d.close();
-		
-		System.out.println("Completed.");
+
+		System.out.println("Completed.");*/
 
 	}
 
