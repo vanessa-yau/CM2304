@@ -75,10 +75,10 @@ public class Database {
 		}
 	}
 
-	public String[] getAllStaff()
+	public String[][] getAllStaff()
 	{
 		
-		String[] allStaff = null;
+		String[][] allStaff = null;
 		int lineCount = 0;
 		
 		
@@ -91,14 +91,31 @@ public class Database {
 		}
 		
 		
-		allStaff = new String[lineCount];
+		allStaff = new String[lineCount][6];
 		
 		resetFileReader();
 		
 		int count = 0;
 		while(fileReader.hasNext())
 		{
-			allStaff[count] = fileReader.nextLine();
+			String line = fileReader.nextLine();
+			int attribute = 0;
+			String value = "";
+			
+			for(int i=0; i < line.length(); i++)
+			{
+				if(line.charAt(i) == ',' || line.charAt(i) == ';' )
+				{
+					allStaff[count][attribute] = value;
+					attribute++;
+					value = "";
+				}
+				else
+				{
+					 value += line.charAt(i);
+				}
+			}
+			
 			count++;
 		}
 		
@@ -194,6 +211,26 @@ public class Database {
 		fileWriter.close();
 
 		resetFileReader();
+		return true;
+	}
+	
+	public boolean archiveStaff(String entry)
+	{
+
+		PrintWriter fileWriter = null;
+		try 
+		{
+			fileWriter = new PrintWriter(new BufferedWriter(new FileWriter("staffArchive.txt", true)));
+			
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+			return false;
+		}
+		fileWriter.println(entry);
+		fileWriter.close();
+		
 		return true;
 	}
 
@@ -296,6 +333,10 @@ public class Database {
 				lines[linesIn] = line;
 				linesIn++;
 				System.out.println(lines[linesIn-1]);
+			}
+			else
+			{
+				archiveStaff(line);
 			}
 
 			count++;
@@ -1060,17 +1101,24 @@ public class Database {
 		System.out.println("Completed.");*/
 		
 		Database d = new Database();
-		d.initDatabase("forms.txt");
+		d.initDatabase("users.txt");
 
 		System.out.println("Started.");
 		
-		String[] a = d.getAllStaff();
+		String[][] a = d.getAllStaff();
 		for(int i=0; i < a.length; i++)
 		{
-			System.out.println(a[i]);
+			for(int j=0; j < 6; j++)
+			{
+				System.out.print(a[i][j]+" ");
+			}
+			
+			System.out.println(" ");
 		}
 
 		System.out.println("Completed.");
+		
+		d.close();
 	
 
 	}
