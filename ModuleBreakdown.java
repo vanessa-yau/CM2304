@@ -1,4 +1,5 @@
-import java.awt.Frame;
+import java.io.File;
+import java.io.PrintWriter;
 
 import javax.swing.table.DefaultTableModel;
 
@@ -21,7 +22,7 @@ public class ModuleBreakdown extends javax.swing.JFrame {
 	private String[] paperNames;
 	private String[][] forms;
 	private String module_code = "cm2304"; //read in from List of Module window
-	private String module_name, module_leader;
+	private String module_name, module_leader, formSelected;
 	
 	private javax.swing.Box.Filler filler1;
 	// assessment paper specific variables
@@ -80,7 +81,8 @@ public class ModuleBreakdown extends javax.swing.JFrame {
 		saveChangesButton.setText("Save Changes to Form");
 		saveChangesButton.addActionListener(new java.awt.event.ActionListener() {
 			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				saveChangesButtonActionPerformed(evt);
+				//saveChangesButtonActionPerformed(evt);
+				saveChangesButtonActionPerformed();
 			}
 		});
 		
@@ -118,7 +120,7 @@ public class ModuleBreakdown extends javax.swing.JFrame {
 		modNameLbl.setText("Module Name:");
 
 		modNameValue = new javax.swing.JLabel();
-		modNameValue.setText("YES THIS DOESN@T WORK WHHYYYYY!!");
+		modNameValue.setText("blah");
 		
 		modLeaderLbl = new javax.swing.JLabel();
 		modLeaderLbl.setText("Module Leader:");
@@ -127,11 +129,6 @@ public class ModuleBreakdown extends javax.swing.JFrame {
 		//edited below
 		//modLeaderComboBox.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 		modLeaderComboBox.setModel(new javax.swing.DefaultComboBoxModel(inStaffNames));
-		modLeaderComboBox.addActionListener(new java.awt.event.ActionListener() {
-			public void actionPerformed(java.awt.event.ActionEvent evt) {
-				modLeaderComboBoxActionPerformed(evt);
-			}
-		});
 		
 		assessmentPaperLbl = new javax.swing.JLabel();
 		assessmentPaperLbl.setText("Assessment Paper:");
@@ -142,28 +139,15 @@ public class ModuleBreakdown extends javax.swing.JFrame {
 		
 		// default Table
 		formTableModel = new javax.swing.table.DefaultTableModel(
-				new Object [][] {
-						//{null,null,null,null}
-				},
-				//
+				new Object [][] {},
 				new String [] {
 						"Form Stage", "Staff Name", "Deadline", "Date Completed"
 				});
 		
 		// Form (Table) layout structure
 		formTable = new javax.swing.JTable();
+		formTable.getTableHeader().setReorderingAllowed(false);
 		formTableScrollPane1 = new javax.swing.JScrollPane();
-		/*formTable.setModel(new javax.swing.table.DefaultTableModel(
-				// TODO should read from assessment paper table
-				) {
-			Class[] types = new Class [] {
-					java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
-			};
-
-			public Class getColumnClass(int columnIndex) {
-				return types [columnIndex];
-			}
-		});*/
 		
 		formTable.setModel( formTableModel );
 		formTableScrollPane1.setViewportView(formTable);
@@ -293,23 +277,11 @@ public class ModuleBreakdown extends javax.swing.JFrame {
 		nextWindow.setVisible(true);
 		ModuleBreakdown.this.dispose();
 	}
-	
-	private void modLeaderComboBoxActionPerformed(java.awt.event.ActionEvent evt) {                                                  
-		// TODO add your handling code here:
-		System.out.println( "previous module Leader: " + moduleInfo[5]);
-		
-		String nameSelected = (String)modLeaderComboBox.getSelectedItem();
-		moduleInfo[5] = nameSelected;
-		System.out.println("new module leader selected: "+moduleInfo[5]);
-	}
-	
+
+	// selects the assessment paper by name
+	// retrieves the corresponding information from form table
 	private void openFormButtonActionPerformed(java.awt.event.ActionEvent evt) {
-		String formSelected = (String)assessmentPaperComboBox.getSelectedItem();
-		System.out.println( "selected item: "+formSelected+" this works maybe");
-		// selects the assessment paper by name
-		// retrieves the corresponding information from form table
-		
-		formTableModel.addRow( new Object[]{"hello1", "hello2", "hello3", "hello4"});
+		formSelected = (String)assessmentPaperComboBox.getSelectedItem();
 		int formNo = 0;
 		for ( int i=0; i<forms.length; i++)
 		{
@@ -323,40 +295,56 @@ public class ModuleBreakdown extends javax.swing.JFrame {
 		String EM_name = "";
 		
 		// retrieves staff names from internal and external staff lists 
-		if ( !forms[formNo][6].equals("") ){
+		if ( !forms[formNo][3].equals("") ){
 			for ( int v=0; v<internalStaff.length; v++){
-				if( internalStaff[v][0].equals(forms[formNo][6])){
+				if( internalStaff[v][0].equals(forms[formNo][3])){
 					IM_name = internalStaff[v][1];
 				}
 			}
 		}
 		
-		if ( !forms[formNo][7].equals("") ){
+		if ( !forms[formNo][4].equals("") ){
 			for ( int w=0; w<externalStaff.length; w++){
-				if( externalStaff[w][0].equals(forms[formNo][7])){
+				if( externalStaff[w][0].equals(forms[formNo][4])){
 					EM_name = externalStaff[w][1];
 				}
 			}
 		}
 		
-		// displays only selected entries for a ASSESSMENT PAPER FORM depending on
-		// whether the MODULE has a weighting of over 50% towards degree
-		System.out.println(formSelected + " selected. Opening form...");
-		
 		while ( formTableModel.getRowCount() != 0 ){
 			formTableModel.removeRow(0);
 		}
 		
-		// do not change the order of the rows added below:
-		formTableModel.addRow( new Object[]{"Internal Moderation", IM_name, forms[formNo][5], "DATE COMPLETED"} );
-		formTableModel.addRow( new Object[]{"Reviewed by Module Leader", moduleInfo[5], forms[formNo][4], "DATE COMPLETED"}); //should it read nameSelected (from modLeaderComboBoxActionPerformed ) instead of moduleInfo[5]?
-		
-		if(moduleInfo[6].equals("50%+")){
-			formTableModel.addRow( new Object[]{"External Moderation", EM_name, forms[formNo][3], "DATE COMPLETED"});
+		if ( formSelected.equals("select a paper") ){
+			return;
 		}
-		formTableModel.addRow( new Object[]{"Final Deadline for Checking", "E.L.O.", forms[formNo][2], "DATE COMPLETED"});
 		
-		System.out.println(formSelected + " displayed.");
+		int numRows = 0;
+		System.out.println(formSelected + " selected. Opening form...");
+		// displays only selected entries for a ASSESSMENT PAPER FORM depending on
+		// whether the MODULE has a weighting of over 50% towards degree
+		// do not change the order of the rows added below:
+		formTableModel.addRow( new Object[]{"Internal Moderation", IM_name, forms[formNo][4], forms[formNo][8]} );
+		formTableModel.addRow( new Object[]{"Reviewed by Module Leader", moduleInfo[5], forms[formNo][5], forms[formNo][9]});
+		if(moduleInfo[6].equals("50%+")){
+			formTableModel.addRow( new Object[]{"External Moderation", EM_name, forms[formNo][6], forms[formNo][10]});
+		}
+		formTableModel.addRow( new Object[]{"Final Deadline for Checking", "E.L.O.", forms[formNo][7], forms[formNo][11]});
+		
+		/*formTableModel = new DefaultTableModel(){
+		for( int col=0; col<formTableModel.getColumnCount(); col++){
+			//formTableModel.isCellEditable(0, col);
+			public boolean isCellEditable( int row, int column ){
+				return false;
+			}
+		}
+			public boolean isCellEditable( int row, int column ){
+				return false;
+			}
+		};*/
+		formTable.setModel( formTableModel );
+		System.out.println(formSelected + " form opened.\n");
+		
 		return;
 		
 	}
@@ -365,10 +353,19 @@ public class ModuleBreakdown extends javax.swing.JFrame {
 		// TODO add your handling code here:
 	}
 	
-	private void saveChangesButtonActionPerformed(java.awt.event.ActionEvent evt){
-		// TODO add your handling code here:
-		modLeaderComboBoxActionPerformed(evt);
+	//private void saveChangesButtonActionPerformed(java.awt.event.ActionEvent evt){
+	private void saveChangesButtonActionPerformed(){
+				// TODO add your handling code here:
 		System.out.println( "savechanges method reached");
+		
+		String nameSelected = (String)modLeaderComboBox.getSelectedItem();
+		if( !moduleInfo[5].equals(nameSelected) ){
+			moduleInfo[5] = nameSelected;
+			System.out.println("new module leader selected: "+moduleInfo[5]);
+		}
+		
+		formTableModel.fireTableDataChanged();
+		saveFormTableInfo();
 		
 		return;
 	}
@@ -394,7 +391,7 @@ public class ModuleBreakdown extends javax.swing.JFrame {
 		Database db = new Database();
 		db.initDatabase("staff.txt");
 		staffInfo = db.getAllStaff();
-		System.out.println( "staff table copied");
+		System.out.println( "staff table copied\n");
 		db.close();
 		setInternalExternalTables();
 	}
@@ -449,19 +446,19 @@ public class ModuleBreakdown extends javax.swing.JFrame {
 				currentES++;
 			}
 		}
+		System.out.println();
 		return;
 	}
 
 	// forms:
 	//[0] moduleCode; [1] paperName; [2] ELODeadline; [3] EMDeadline; 
-	//[4] MLDeadline; [5] IMDeadline; [6] EM_ID; [7] IM_ID
+	//[4] MLDeadline; [5] IMDeadline; [6] EM_ID; [7] IM_ID;
+	//[8] ELOCompleted; [9] EMCompleted; [10] MLCompleted; [11] IMCompleted
 	private void retrieveForms(){
 		Database db = new Database();
 		db.initDatabase("forms.txt");
 		forms = db.getModuleForms(module_code);
 		db.close();
-		
-		System.out.println(forms.length);
 		
 		paperNames = new String[forms.length+1];
 		paperNames[0] = "select a paper";
@@ -470,7 +467,7 @@ public class ModuleBreakdown extends javax.swing.JFrame {
 			paperNames[i+1] = forms[i][1];
 			System.out.println(paperNames[i+1]+" added to drop down list");
 		}
-		
+		System.out.println();
 		return;
 	}
 	
@@ -481,8 +478,44 @@ public class ModuleBreakdown extends javax.swing.JFrame {
 	}
 	
 	private void saveFormTableInfo(){
-		//TODO fill here;
-		//http://stackoverflow.com/questions/16395939/getting-values-from-jtable-cell
+		//DefaultTableModel dtm = (DefaultTableModel) formTable.getModel();
+		//int nRow = dtm.getRowCount(), nCol = dtm.getColumnCount();
+		int nRow = formTableModel.getRowCount(), nCol = formTableModel.getColumnCount();
+				
+		Object[][] tableData = new String[nRow][nCol];
+		String s ;
+		StringBuffer s1 = new StringBuffer();
+		//attempt to write to file
+		try{
+			PrintWriter fw = new PrintWriter(new File("output.txt"));
+			s1.append(module_code+","+formSelected+",");
+			s1.append(tableData[1][1]+","+tableData[3][1]+",");
+			for(int i =0; i <nRow; i++){
+				for(int j = 2; j < nCol; j++){
+					tableData[i][j] = (String)formTableModel.getValueAt(i,j);
+					System.out.println("[i][j]: "+formTableModel.getValueAt(i,j) );
+					//s =tableData[i][j].toString();
+
+					s1.append(tableData[i][j]);
+					if( !(i == 4) && !(j == 4) ){
+						s1.append(",");
+					}
+					else if ( (i==4) && (j==4) ){
+						s1.append(";");
+					}
+					//s1.append(",");
+				}
+				//fw.println(s1);
+			}
+			fw.println("moduleCode,paperName,Module Leader,IM_ID,EM_ID,IMDeadline,MLDeadline,"+
+					"EMDeadline,ELODeadline,IMCompleted,MLCompleted,EMCompleted,ELOCompleted");
+			fw.println(s1);
+			fw.close();
+		}
+		catch(Exception f ){
+			System.out.println("something went wrong   " + f);
+		}
+		System.out.println( "Updated Form Table saved to file ");
 		return;
 	}
 	

@@ -1,6 +1,8 @@
 import java.io.BufferedWriter;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -8,6 +10,7 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 
@@ -15,11 +18,14 @@ public class Database {
 
 	String filePath;
 	Scanner fileReader;
-
+	File staff, modules, forms;
+	String[][] allForms;
 
 	public Database()
 	{
-
+		staff = new File("staff.txt");
+		modules = new File("modules.txt");
+		forms = new File("forms.txt");
 	}
 
 	/*
@@ -46,42 +52,13 @@ public class Database {
 
 	}
 
-	// http://stackoverflow.com/questions/453018/number-of-lines-in-a-file-in-java
-	private int countFileLines(String filename) throws IOException {
-		InputStream is = new BufferedInputStream(new FileInputStream(filename));
-		try {
-			byte[] c = new byte[1024];
-			int count = 0;
-			int readChars = 0;
-			boolean empty = true;
-			while ((readChars = is.read(c)) != -1) {
-				empty = false;
-				for (int i = 0; i < readChars; ++i) {
-					if (c[i] == '\n') {
-						++count;
-					}
-				}
-			}
-			return (count == 0 && !empty) ? 1 : count;
-		} 
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			return -1;
-		}
-		finally 
-		{
-			is.close();
-		}
-	}
-
 	public String[][] getAllStaff()
 	{
-		
+
 		String[][] allStaff = null;
 		int lineCount = 0;
-		
-		
+
+
 		while(fileReader.hasNext())
 		{
 
@@ -89,19 +66,19 @@ public class Database {
 			fileReader.nextLine();
 
 		}
-		
-		
+
+
 		allStaff = new String[lineCount][6];
-		
+
 		resetFileReader();
-		
+
 		int count = 0;
 		while(fileReader.hasNext())
 		{
 			String line = fileReader.nextLine();
 			int attribute = 0;
 			String value = "";
-			
+
 			for(int i=0; i < line.length(); i++)
 			{
 				if(line.charAt(i) == ',' || line.charAt(i) == ';' )
@@ -112,78 +89,89 @@ public class Database {
 				}
 				else
 				{
-					 value += line.charAt(i);
+					value += line.charAt(i);
 				}
 			}
-			
+
 			count++;
 		}
-		
+
 		return allStaff;
 	}
 
-	public int countForms(String moduleCode){
-		try
-		{
-			System.out.println("starts getAllForms method");
-			int totalLineCount = countFileLines("forms.txt");
-			int numForms = 0;
-			for( int i=0; i<totalLineCount; i++ )
-			{
-				String line = fileReader.nextLine();
-				if ( line.contains(moduleCode) == true ){
-					numForms++;
-				}
-			}
-			fileReader.close();
-			System.out.println("not crashed yet...");
-			return numForms;
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
-			return -1;
-		}
-	}
-	
-	public String[][] getAllForms(String moduleCode)
+	public String[][] getModuleForms(String moduleCode)
 	{
-		try
+		String[][] allForms = null;
+		int lineCount = 0;
+
+
+		while(fileReader.hasNext())
 		{
-			int numForms = countForms(moduleCode);
-			System.out.println( numForms );
-			String[][] moduleForms = new String[numForms][7];
-			for( int i=0; i<countFileLines("forms.txt"); i++ )
+
+			lineCount++;
+			fileReader.nextLine();
+
+		}
+
+
+		allForms = new String[lineCount][12];
+
+		resetFileReader();
+
+		int count = 0;
+		while(fileReader.hasNext())
+		{
+			String line = fileReader.nextLine();
+			int attribute = 0;
+			String value = "";
+
+			for(int i=0; i < line.length(); i++)
 			{
-				String line = fileReader.nextLine();
-				System.out.println("nothing");
-				if ( line.contains(moduleCode)){
-					String[] parts = line.split(",");
-					parts[7] = parts[7].substring(0, parts[7].length()-1);
-					System.out.println( parts[7]);
-					//[0] moduleCode; [1] paperName; [2] ELODeadline; [3] EMDeadline; 
-					//[4] MLDeadline; [5] IMDeadline; [6] EM_ID; [7] IM_ID
-					moduleForms[i][0] = parts[0];
-					moduleForms[i][1] = parts[1];
-					moduleForms[i][2] = parts[2];
-					moduleForms[i][3] = parts[3];
-					moduleForms[i][4] = parts[4];
-					moduleForms[i][5] = parts[5];
-					moduleForms[i][6] = parts[6];
-					moduleForms[i][7] = parts[7];
+				if(line.charAt(i) == ',' || line.charAt(i) == ';' )
+				{
+					allForms[count][attribute] = value;
+					attribute++;
+					value = "";
+				}
+				else
+				{
+					value += line.charAt(i);
 				}
 			}
-			fileReader.close();
-			System.out.println("forms table saved");
-			return moduleForms;
+
+			count++;
 		}
-		catch (IOException e)
+		
+		ArrayList<Integer> list = new ArrayList<Integer>();
+		int arrSize = 0;
+		
+		for(int i=0; i < allForms.length ; i++)
 		{
-			e.printStackTrace();
-			return null;
+			if( allForms[i][0].equals(moduleCode) )
+			{
+				list.add(i);
+				arrSize++;
+			}
 		}
+		
+		int position = 0;
+		String[][] modForms = new String[arrSize][12];
+		
+		for( int v : list)
+		{
+			for( int w=0; w<12; w++)
+			{
+				modForms[position][w] = allForms[v][w];
+			}
+			
+			position++;
+			
+		}
+		
+		return modForms;
+		
 	}
-	
+
 	/*
 	 * Inserts a new staff into the database
 	 * @param fName String Staffs first name
@@ -213,7 +201,7 @@ public class Database {
 		resetFileReader();
 		return true;
 	}
-	
+
 	public boolean archiveStaff(String entry)
 	{
 
@@ -221,7 +209,7 @@ public class Database {
 		try 
 		{
 			fileWriter = new PrintWriter(new BufferedWriter(new FileWriter("staffArchive.txt", true)));
-			
+
 		} 
 		catch (IOException e) 
 		{
@@ -230,7 +218,7 @@ public class Database {
 		}
 		fileWriter.println(entry);
 		fileWriter.close();
-		
+
 		return true;
 	}
 
@@ -892,8 +880,14 @@ public class Database {
 		return module;
 	}
 
-	public boolean insertAssessmentPaper(String moduleCode, String paperName, String ELODeadline,
-			String EMDeadline, String MLDeadline, String IMDeadline, String EM_ID, String IM_ID)
+	/*
+	 * [0] moduleCode; [1] paperName; [2] IM_ID; [3] EM_ID; 
+	 * [4] IMDeadline; [5] MLDeadline; [6] EMDeadline; [7] ELODeadline;
+	 * [8] IMCompleted; [9] MLCompleted; [10] EMCompleted; [11] ELOCompleted
+	 */
+	public boolean insertAssessmentPaper(String moduleCode, String paperName, String IM_ID,
+			String EM_ID, String IMDeadline, String MLDeadline, String EMDeadline, String ELODeadline,
+			String IMCompleted, String MLCompleted, String EMCompleted, String ELOCompleted)
 	{
 		fileReader.close();
 
@@ -906,7 +900,9 @@ public class Database {
 		{
 			e.printStackTrace();
 		}
-		fileWriter.println(moduleCode+","+paperName+","+ELODeadline+","+EMDeadline+","+MLDeadline+","+IMDeadline+","+EM_ID+","+IM_ID+";");
+		fileWriter.println(moduleCode+","+paperName+","+IM_ID+","+EM_ID+","+IMDeadline+","
+				+MLDeadline+","+EMDeadline+","+ELODeadline+","+IMCompleted+","+MLCompleted+","
+				+EMCompleted+","+ELOCompleted+";");
 		fileWriter.close();
 
 		resetFileReader();
@@ -915,7 +911,7 @@ public class Database {
 
 	public String[] getAssessmentPapers(String searchAttribute, String searchValue)
 	{
-		String[] module = new String[8];
+		String[] module = new String[12];
 
 		int attribute = 0;
 
@@ -927,31 +923,47 @@ public class Database {
 		{
 			attribute = 1;
 		}
-		else if(searchAttribute.compareToIgnoreCase("ELO deadline") == 0)
+		else if(searchAttribute.compareToIgnoreCase("IM_ID") == 0)
 		{
 			attribute = 2;
 		}
-		else if(searchAttribute.compareToIgnoreCase("EM deadline") == 0)
+		else if(searchAttribute.compareToIgnoreCase("EM_ID") == 0)
 		{
 			attribute = 3;
 		}
-		else if(searchAttribute.compareToIgnoreCase("ML deadline") == 0)
+		else if(searchAttribute.compareToIgnoreCase("IM deadline") == 0)
 		{
 			attribute = 4;
 		}
-		else if(searchAttribute.compareToIgnoreCase("IM deadline") == 0)
+		else if(searchAttribute.compareToIgnoreCase("ML deadline") == 0)
 		{
 			attribute = 5;
 		}
-		else if(searchAttribute.compareToIgnoreCase("EM ID") == 0)
+		else if(searchAttribute.compareToIgnoreCase("EM deadline") == 0)
 		{
 			attribute = 6;
 		}
-		else if(searchAttribute.compareToIgnoreCase("IM ID") == 0)
+		else if(searchAttribute.compareToIgnoreCase("ELO deadline") == 0)
 		{
 			attribute = 7;
 		}
-
+		/*else if(searchAttribute.compareToIgnoreCase("IM completed") == 0)
+		{
+			attribute = 8;
+		}
+		else if(searchAttribute.compareToIgnoreCase("ML completed") == 0)
+		{
+			attribute = 9;
+		}
+		else if(searchAttribute.compareToIgnoreCase("EM completed") == 0)
+		{
+			attribute = 10;
+		}
+		else if(searchAttribute.compareToIgnoreCase("ELO completed") == 0)
+		{
+			attribute = 11;
+		}*/
+		
 		boolean found = false;
 		while(fileReader.hasNext() && !found)
 		{
@@ -991,7 +1003,7 @@ public class Database {
 
 		if(!found)
 		{
-			for(int i=0; i < 8; i++)
+			for(int i=0; i < 12; i++)
 				module[i] = "";
 		}
 
@@ -1083,11 +1095,12 @@ public class Database {
 		d.insertAssessmentPaper("cm2304", "cw2", "ELODate2", "EMDeadline2", "MLDeadline2", "IMDeadline2", "1001001", "2002002");
 		d.insertAssessmentPaper("cm2304", "cw3", "ELODate3", "EMDeadline3", "MLDeadline3", "IMDeadline3", "1001001", "2002002");
 		d.insertAssessmentPaper("cm2304", "cw4", "ELODate4", "EMDeadline4", "MLDeadline4", "IMDeadline4", "1001001", "2002002");
-		
-		d.insertStaff("Simon", "Titcomb", "LOLNOPE@nah.com", "2345678986", "nahmate", "TitS");
+		d.initDatabase("modules.txt");
+		d.insertModule("group project", "cm2304", "20", "4", "0", "Simon Titcomb", "+50%");
+		/*d.insertStaff("Simon", "Titcomb", "LOLNOPE@nah.com", "2345678986", "nahmate", "TitS");
 		d.insertStaff("Aly", "Sheriff", "kingtut@pharoahpower.com", "11111", "egyptrules", "Tut");
 		d.insertStaff("Mez", "Gangbanger", "kingofrape@ianwatkins.com", "5678987", "kids", "Kids101");
-		
+
 		String a = d.getStaffFirstName("staffID", "TitS");
 		String b = "";
 		System.out.println(a);
@@ -1095,16 +1108,17 @@ public class Database {
 		String mez = d.getStaffEmail("first name", "mez");
 		System.out.println(mez);
 		System.out.println(d.deleteStaff("staffID","Tut"));
-		
 		d.close();
+		 */
 
-		System.out.println("Completed.");*/
-		
-		Database d = new Database();
-		d.initDatabase("users.txt");
+
+		System.out.println("Completed.");
+
+		/*Database d = new Database();
+		d.initDatabase("staff.txt");
 
 		System.out.println("Started.");
-		
+
 		String[][] a = d.getAllStaff();
 		for(int i=0; i < a.length; i++)
 		{
@@ -1112,14 +1126,14 @@ public class Database {
 			{
 				System.out.print(a[i][j]+" ");
 			}
-			
+
 			System.out.println(" ");
 		}
 
 		System.out.println("Completed.");
-		
-		d.close();
-	
+
+		d.close();*/
+
 
 	}
 
