@@ -1,10 +1,11 @@
+
+import java.awt.event.ActionEvent;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-package practice;
 
 /**
  *
@@ -15,6 +16,7 @@ public class LoginGUI extends javax.swing.JFrame {
     /**
      * Creates new form LoginGUI
      */
+    
     public LoginGUI() {
         initComponents();
     }
@@ -27,7 +29,8 @@ public class LoginGUI extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
-
+        
+        active = true;
         jScrollPane1 = new javax.swing.JScrollPane();
         jLabel1 = new javax.swing.JLabel();
         jPasswordField1 = new javax.swing.JPasswordField();
@@ -55,6 +58,32 @@ public class LoginGUI extends javax.swing.JFrame {
         });
 
         jButton2.setText("SUBMIT");
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+
+            private void jButton2ActionPerformed(ActionEvent evt) {
+                
+                char[] temp = jPasswordField1.getPassword();
+                String temp2 = "";
+                
+                for (int i = 0; i < temp.length; i++) {
+                    temp2 += temp[i];
+                }
+                
+                username = jTextField1.getText();
+                password = temp2;
+                
+                active = false;
+                //dispose();
+            }
+            
+            public String getUserName (){
+                return username;
+            }
+            //public 
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -135,7 +164,7 @@ public class LoginGUI extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new LoginGUI().setVisible(true);
+                //login.setVisible(true);
             }
         });
     }
@@ -148,5 +177,8 @@ public class LoginGUI extends javax.swing.JFrame {
     private javax.swing.JPasswordField jPasswordField1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField jTextField1;
+    protected boolean active;
+    protected String username;
+    protected String password;
     // End of variables declaration                   
 }
