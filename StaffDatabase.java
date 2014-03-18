@@ -9,36 +9,41 @@ import java.io.UnsupportedEncodingException;
 public class StaffDatabase extends Database
 {
 
+	public StaffDatabase(){
+		super();
+        	staffTable = new File("staff.txt");
+	}
 	
-	/*
+	/*Returns staff database*/
+        public File getStaffTable(){            
+        	return staffTable;
+        }
+	
+        /*
 	 * Inserts a new staff into the database
 	 * @param fName String Staffs first name
 	 * @param lName String Staffs last name
 	 * @param email	String Staffs email
-	 * @param number String Staffs number
-	 * @param password String Staffs password
+	 * @param number String Staffs phone number
 	 * @param staffID String Staffs ID
-	 * @return boolean Returns true if the staff was successfully inserted and false otherwise
 	 */
-	public boolean insertStaff(String fName, String lName, String email, String number, String staffID, String staffRole)
+	public void insertStaff(String lName, String fName, Object staffID, String number, String email , String staffType)
 	{
-		fileReader.close();
-
-		PrintWriter fileWriter = null;
+		BufferedWriter newStaff;
+		
 		try 
 		{
-			fileWriter = new PrintWriter(new BufferedWriter(new FileWriter(filePath, true)));
-		} 
+                    newStaff = new BufferedWriter(new FileWriter(staffTable, true));                    
+                    newStaff.write(lName+","+fName+","+staffID+","+number+","+email+","+staffType+ "\n");
+                    newStaff.close();
+         	} 
 		catch (IOException e) 
 		{
-			e.printStackTrace();
+                    System.out.println("Error : Problem adding new user to database");
 		}
-		fileWriter.println(fName+","+lName+","+email+","+number+","+staffID+","+staffRole+";");
-		fileWriter.close();
-
-		resetFileReader();
-		return true;
-	}
+         }
+         
+        
 	
 	public boolean archiveStaff(String entry)
 	{
