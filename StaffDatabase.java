@@ -1,3 +1,4 @@
+
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -11,8 +12,10 @@ import java.io.File;
 public class StaffDatabase extends Database
 {
 
+        File staffTable;
+        
 	public StaffDatabase(){
-		super();
+		
         	staffTable = new File("staff.txt");
 	}
 	
@@ -29,7 +32,7 @@ public class StaffDatabase extends Database
 	 * @param number String Staffs phone number
 	 * @param staffID String Staffs ID
 	 */
-	public void insertStaff(String lName, String fName, Object staffID, String number, String email , String staffType)
+        public final void insertStaff(String lName, String fName, Object staffID, String number, String email , String staffType)
 	{
 		BufferedWriter newStaff;
 		
