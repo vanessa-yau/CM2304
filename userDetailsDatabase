@@ -1,0 +1,89 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package msettings;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Scanner;
+
+/**
+ *Database for users,there should be an existing file containing users
+ * this class reads the file overwrites it with any changes made,depending on which user is logged in
+ * 
+ * @author Leatile
+ */
+public class DatabaseChangeUserInfo 
+{
+    String filePath;
+    Scanner fileReader;
+    File users;
+    String fileName;
+    // database constructor intialises the filepath for the users text file.
+    public DatabaseChangeUserInfo(String inFilePath)
+    {
+        filePath=inFilePath;
+       // filePath="C:\\Users\\Leatile\\Documents\\users.txt";
+    }
+    //reads lines from the text file
+    public String readAndGetLine(String fileName)
+    {
+        String line ="";
+        File file = new File(fileName);
+             
+        try {
+               Scanner scanner = new Scanner(file);
+
+                while (scanner.hasNextLine())
+		{
+                    line += scanner.nextLine();
+		 }
+		  scanner.close();
+                 }
+		 catch (FileNotFoundException e)
+		 {
+                      e.printStackTrace();
+		 }
+		 return line;
+    }
+    //enters details and overwrites content in existing file.
+    public void changeUserDetails(String fName, String lName, String email, String number, String staffID,String password)
+    {
+        BufferedWriter fileWriter = null;
+        try 
+        {       
+                fileWriter = (new BufferedWriter(new FileWriter(filePath,false)));
+                fileWriter.write(fName+","+lName+","+email+","+number+","+staffID+","+password+";");
+                fileWriter.close();
+        } 
+        catch (IOException e) 
+	{
+            e.printStackTrace();
+        }
+        return;
+    }
+              
+}
+	
+        
+  
+
+  
+
+        
+
+        
+            
+    
+
+       
+
