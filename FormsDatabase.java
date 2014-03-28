@@ -147,34 +147,93 @@ public class FormsDatabase extends Database
 
 	public boolean deleteAssessmentPaper(String moduleCode, String paperName)
 	{
-		//int number_lines = countFileLines("forms.txt");
-		while( fileReader.hasNext()){
+		
+		int count = 0;
+		int foundLine = 0;
+		String archiveLine = "";
+		
+		String tem[] = getAssessmentPapers("module code", moduleCode);
+		
+		while( fileReader.hasNext())
+		{
 			
 			String line = fileReader.nextLine();
-			if ( line.contains(moduleCode) && line.contains(paperName) ){
-				//delete row from forms file
+			
+			if ( line.contains(moduleCode) && line.contains(paperName))
+			{
 				
-				
-				//archive the row to another file and add another column for current date 
-				// Date d = new Date
-				
-				// insert new row - using insertAssessmentPaper method above
+				foundLine = count;
+				archiveLine = line;
+				break;
 				
 			}
+			
+			count++;
 		}
+		
+		resetFileReader();
+		
+		if(archiveLine == "")
+			return false;
+		
+		System.out.println("count = "+foundLine+" archive line = "+archiveLine);
+		
+		count = 0;
+		String temp = "";
+		while(fileReader.hasNext())
+		{
+			String line = fileReader.nextLine();
+			if(count != foundLine)
+			{
+				temp += line+"\n";
+			}
+			
+			count++;
+			
+		}
+		
+		fileReader.close();
+
+		PrintWriter fileWriter = null;
+		try 
+		{
+			fileWriter = new PrintWriter(filePath, "UTF-8");
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+		fileWriter.write(temp);
+		fileWriter.close();
+
+		resetFileReader();
+		
+		archivePaper(archiveLine);
+		
+		
 		
 		return true;
 		
 	}
 	
 	public boolean archivePaper(String entry){
-		// TODO fill here
+		PrintWriter fileWriter = null;
+		try 
+		{
+			fileWriter = new PrintWriter(new BufferedWriter(new FileWriter("archiveForms.txt", true)));
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}
+		fileWriter.println(entry);
+		fileWriter.close();
 		return false;
 	}
 	
 	public String[] getAssessmentPapers(String searchAttribute, String searchValue)
 	{
-		String[] module = new String[8];
+		String[] module = new String[12];
 
 		int attribute = 0;
 
@@ -210,6 +269,23 @@ public class FormsDatabase extends Database
 		{
 			attribute = 7;
 		}
+		else if(searchAttribute.compareToIgnoreCase("EM deadline") == 0)
+		{
+			attribute = 8;
+		}
+		else if(searchAttribute.compareToIgnoreCase("ML deadline") == 0)
+		{
+			attribute = 9;
+		}
+		else if(searchAttribute.compareToIgnoreCase("IM deadline") == 0)
+		{
+			attribute = 10;
+		}
+		else if(searchAttribute.compareToIgnoreCase("EM ID") == 0)
+		{
+			attribute = 11;
+		}
+
 
 		boolean found = false;
 		while(fileReader.hasNext() && !found)
@@ -305,5 +381,15 @@ public class FormsDatabase extends Database
 	{
 		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
 		return moduleInfo[7];
+	}
+	
+	public static void main(String args[])
+	{
+		FormsDatabase d = new FormsDatabase();
+		d.initDatabase("blah.txt");
+		
+		d.deleteAssessmentPaper("YOLO", "OOA");
+		
+		d.close();
 	}
 }
