@@ -18,7 +18,7 @@ import javax.mail.internet.MimeMultipart;
  
 public class SendMailTLS {
  
-	public static void sendEmail(final String username, final String password, String toEmail, String fileAttachment, 
+	public void sendEmail(final String username, final String password, String toEmail, String fileAttachment, 
 			String subject, String emailContent) {
 		
 		// Connection Details
@@ -104,8 +104,9 @@ public class SendMailTLS {
 	}
 	
 	public static void main(String[] args) {
-	
-		sendEmail("chickentika99@gmail.com", "password97", "chickentika99@gmail.com", "",
+                
+            SendMailTLS sendThis = new SendMailTLS();
+		sendThis.sendEmail("chickentika99@gmail.com", "password97", "chickentika99@gmail.com", "",
 				"Pyramids", "They are awesome, yah?");
 		
 		//sendEmail("Abdelfattah-ElmakhzanguiAS@cardiff.ac.uk", "********", "chickentika99@gmail.com", "",

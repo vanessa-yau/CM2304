@@ -1,14 +1,12 @@
 // Created by Aly Abdelfattah-Elmakhzangui
 
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Properties;
  
 import javax.mail.Address;
+import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -23,35 +21,30 @@ import org.jsoup.Jsoup;
 public class EmailAttachmentReceiver {
     
     private Store store;
-    private Date date;
     private String userName;
     private String password;
     private String input;
     private Folder folderInbox;
-    private Message[] arrayMessages;
-    
+    protected Message[] arrayMessages;
+    protected ArrayList<String> fromAddresses;
+    protected ArrayList<String> subjectArray;
+    protected ArrayList<String> dateArray;
+    protected ArrayList<String> attachmentArray;
+    // Fairly obvious here...
     public void setLoginDetails(String a, String b) {
-        
         userName = a;
         password = b;
     }
     
-    public void setDateFrom(String c) {
-        
-        input = c;
-    }
-    public void connect() throws ParseException {
-        
-        // Makes the date required in a format the code can work with
-    	input = input.replaceAll("/", "");
-    	int inputDate = Integer.parseInt(input);;
-    	DateFormat df = new SimpleDateFormat("yyyyMMdd");
-    	date = df.parse(String.valueOf(inputDate));
+    // Connect to the mailbox
+    public boolean connect() throws ParseException {
     	
     	// Initiate e-mail protocols
         Properties properties = new Properties();
         properties.setProperty("mail.store.protocol", "imaps");
- 
+        store = null;
+        
+        // The different possiblities of accounts
         try {
             
             Session session = Session.getInstance(properties, null);
@@ -85,24 +78,38 @@ public class EmailAttachmentReceiver {
             else if (userName.contains("@virginmedia")) {
             	store.connect("imap.virginmedia.com", userName, password);
             }
+            
+            else {
+                throw new IllegalArgumentException();
+            }
         }
         
         catch (NoSuchProviderException ex) {
             System.out.println("No provider for imap.");
             ex.printStackTrace();
+            return false;
         } 
         
         catch (MessagingException ex) {
             System.out.println("Could not connect to the message store");
             ex.printStackTrace();
+            return false;
         }
+        
+        catch (IllegalArgumentException ex) {
+            System.out.println("HIHIHIHIHIHIHIH");
+            return false;
+        }
+        
+        return true;
     }
     
+    // Actually read the inbox you connected
     public void readInbox() throws MessagingException {
         
         // opens the inbox folder
         folderInbox = store.getFolder("INBOX");
-        folderInbox.open(Folder.READ_ONLY);
+        folderInbox.open(Folder.READ_WRITE);
  
         // fetches new messages from server
         arrayMessages = folderInbox.getMessages();
@@ -110,50 +117,87 @@ public class EmailAttachmentReceiver {
     
     // Gets all the "from" e-mail addresses in the inbox
     // stores them in an ArrayList which we can then split up and use in the table
-    public ArrayList<String> getFromAddress() throws MessagingException {
+    public void getFromAddress() throws MessagingException {
         
-        ArrayList<String> fromAddresses = new ArrayList<>();
+        fromAddresses = new ArrayList<>();
         for (Message message : arrayMessages) {
             Address[] fromAddress = message.getFrom();
             String from = fromAddress[0].toString();
             fromAddresses.add(from);
         }
-        
-        return fromAddresses;
-        
     }
     
     // Gets all the subject of the e-mails in the inbox
     // stores them in an ArrayList which we can then split up and use in the table
-    public ArrayList<String> getSubject() throws MessagingException {
+    public void getSubject() throws MessagingException {
         
-        ArrayList<String> subjectArray = new ArrayList<>();
+        subjectArray = new ArrayList<>();
         for (Message message : arrayMessages) {
             String subject = message.getSubject();
             subjectArray.add(subject);
         }
-        
-        return subjectArray;
     }
     
     // Gets all the dates of the e-mails in the inbox
     // stores them in an ArrayList which we can then split up and use in the table
-    public ArrayList<String> getDate() throws MessagingException {
+    public void getDate() throws MessagingException {
         
-        ArrayList<String> dateArray = new ArrayList<>();
+        dateArray = new ArrayList<>();
         for (Message message : arrayMessages) {
             String sentDate = message.getSentDate().toString();
             dateArray.add(sentDate);
         }
-        
-        return dateArray;
     }
     
+    public void hasAttachment() throws MessagingException, IOException {
+        
+        attachmentArray = new ArrayList<>();
+        for (Message message : arrayMessages) {
+            String contentType = message.getContentType();
+            String attachFiles = "";
+            if (contentType.contains("multipart")) {
+                // content may contain attachments
+                Multipart multiPart = (Multipart) message.getContent();
+                int numberOfParts = multiPart.getCount();
+                for (int partCount = 0; partCount < numberOfParts; partCount++) {
+                    MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
+                    String partContentType = part.getContentType();
+                    partContentType = partContentType.substring(0, 11);
+                    if (partContentType.equalsIgnoreCase("APPLICATION")) {
+                        // this part is attachment
+                        String fileName = part.getFileName();
+                        attachFiles += fileName + ", ";
+                        if (fileName.contains("/")) {
+                            int cutOff = fileName.lastIndexOf("/");
+                            fileName = fileName.substring(cutOff);
+                        }
+                        
+                        fileName = "/" + fileName;
+                    }
+                }
+            
+                attachmentArray.add(attachFiles);
+            }
+            
+            else {
+                attachmentArray.add("");
+            }
+        }
+    }
+    
+    public void deleteEmail(Message toDelete) throws MessagingException {
+        Folder trash = store.getFolder("[Gmail]/Trash");
+        Message[] delete = new Message[1];
+        delete[0] = toDelete;
+        folderInbox.copyMessages(delete, trash);
+        //toDelete.setFlag(Flags.Flag.DELETED, true);
+    }
+    
+    // Again, fairly obvious...
     public void downloadAttachment(String saveDirectory) throws ParseException, MessagingException, IOException {
             
         for (int i = 0; i < arrayMessages.length; i++) {
             Message message = arrayMessages[i];
-            if (message.getSentDate().after(date)) { 
 
                 Address[] fromAddress = message.getFrom();
                 String from = fromAddress[0].toString();
@@ -233,7 +277,6 @@ public class EmailAttachmentReceiver {
                 System.out.println("\t Sent Date: " + sentDate);
                 System.out.println("\t Message: " + messageContent);
                 System.out.println("\t Attachments: " + attachFiles);
-            }
         }
  
         // disconnect
@@ -246,14 +289,14 @@ public class EmailAttachmentReceiver {
     	
         //String port = "993";
         EmailAttachmentReceiver receiver = new EmailAttachmentReceiver();
-        receiver.setDateFrom("2014/01/04");
         receiver.setLoginDetails("chickentika99@gmail.com", "password97");
         receiver.connect();
         receiver.readInbox();
-        //System.out.println(receiver.getFromAddress());
-        //System.out.println(receiver.getSubject());
-        //System.out.println(receiver.getDate());
-        receiver.downloadAttachment("/Users/Pharaoh/Dropbox/Dump");
+        receiver.getFromAddress();
+        receiver.getSubject();
+        receiver.deleteEmail(receiver.arrayMessages[0]);
+        //receiver.getDate();
+        //receiver.downloadAttachment("/Users/Pharaoh/Dropbox/Dump");
  
     }
 }

@@ -44,13 +44,13 @@ public class LoginGUI extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Tahoma", 0, 18)); // NOI18N
         jLabel1.setText("LOGIN");
 
-        jPasswordField1.setText("jPasswordField1");
+        jPasswordField1.setText("password97");
 
         jLabel2.setText("Password");
 
         jLabel3.setText("Username");
 
-        jTextField1.setText("fadhfha");
+        jTextField1.setText("chickentika99@gmail.com");
         jTextField1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jTextField1ActionPerformed(evt);
