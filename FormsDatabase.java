@@ -176,7 +176,6 @@ public class FormsDatabase extends Database
 		if(archiveLine == "")
 			return false;
 		
-		System.out.println("count = "+foundLine+" archive line = "+archiveLine);
 		
 		count = 0;
 		String temp = "";
@@ -216,7 +215,8 @@ public class FormsDatabase extends Database
 		
 	}
 	
-	public boolean archivePaper(String entry){
+	public boolean archivePaper(String entry)
+	{
 		PrintWriter fileWriter = null;
 		try 
 		{
@@ -225,10 +225,11 @@ public class FormsDatabase extends Database
 		catch (IOException e) 
 		{
 			e.printStackTrace();
+			return false;
 		}
 		fileWriter.println(entry);
 		fileWriter.close();
-		return false;
+		return true;
 	}
 	
 	public String[] getAssessmentPapers(String searchAttribute, String searchValue)
@@ -383,13 +384,4 @@ public class FormsDatabase extends Database
 		return moduleInfo[7];
 	}
 	
-	public static void main(String args[])
-	{
-		FormsDatabase d = new FormsDatabase();
-		d.initDatabase("blah.txt");
-		
-		d.deleteAssessmentPaper("YOLO", "OOA");
-		
-		d.close();
-	}
 }

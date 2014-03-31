@@ -12,19 +12,19 @@ import java.io.File;
 public class StaffDatabase extends Database
 {
 
-        File staffTable;
-        
+	File staffTable;
+
 	public StaffDatabase(){
-		
-        	staffTable = new File("staff.txt");
+
+		staffTable = new File("staff.txt");
 	}
-	
+
 	/*Returns staff database*/
-        public File getStaffTable(){            
-        	return staffTable;
-        }
-	
-        /*
+	public File getStaffTable(){            
+		return staffTable;
+	}
+
+	/*
 	 * Inserts a new staff into the database
 	 * @param fName String Staffs first name
 	 * @param lName String Staffs last name
@@ -32,32 +32,30 @@ public class StaffDatabase extends Database
 	 * @param number String Staffs phone number
 	 * @param staffID String Staffs ID
 	 */
-        public final void insertStaff(String lName, String fName, Object staffID, String number, String email , String staffType)
+	public final void insertStaff(String lName, String fName, Object staffID, String number, String email , String staffType)
 	{
 		BufferedWriter newStaff;
-		
+
 		try 
 		{
-                    newStaff = new BufferedWriter(new FileWriter(staffTable, true));                    
-                    newStaff.write(lName+","+fName+","+staffID+","+number+","+email+","+staffType+ "\n");
-                    newStaff.close();
-         	} 
+			newStaff = new BufferedWriter(new FileWriter(staffTable, true));                    
+			newStaff.write(lName+","+fName+","+staffID+","+number+","+email+","+staffType+ "\n");
+			newStaff.close();
+		} 
 		catch (IOException e) 
 		{
-                    System.out.println("Error : Problem adding new user to database");
+			System.out.println("Error : Problem adding new user to database");
 		}
-         }
+	}
          
         
 	
 	public boolean archiveStaff(String entry)
 	{
-
 		PrintWriter fileWriter = null;
 		try 
 		{
-			fileWriter = new PrintWriter(new BufferedWriter(new FileWriter("staffArchive.txt", true)));
-			
+			fileWriter = new PrintWriter(new BufferedWriter(new FileWriter("archiveStaff.txt", true)));
 		} 
 		catch (IOException e) 
 		{
@@ -66,7 +64,6 @@ public class StaffDatabase extends Database
 		}
 		fileWriter.println(entry);
 		fileWriter.close();
-		
 		return true;
 	}
 

@@ -145,6 +145,10 @@ public class ModuleDatabase extends Database
 				linesIn++;
 				System.out.println(lines[linesIn-1]);
 			}
+			else
+			{
+				archiveModule(line);
+			}
 
 			count++;
 		}
@@ -358,5 +362,22 @@ public class ModuleDatabase extends Database
 		resetFileReader();
 
 		return module;
+	}
+	
+	public boolean archiveModule(String entry)
+	{
+		PrintWriter fileWriter = null;
+		try 
+		{
+			fileWriter = new PrintWriter(new BufferedWriter(new FileWriter("archiveModule.txt", true)));
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+			return false;
+		}
+		fileWriter.println(entry);
+		fileWriter.close();
+		return true;
 	}
 }
