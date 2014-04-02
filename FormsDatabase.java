@@ -72,7 +72,12 @@ public class FormsDatabase extends Database
 	}
 	
 	/*
-	 * forms:
+	 * Gets all form information from the database if the search term matches the search attribute
+	 * eg. moduleCode = CM23303
+	 * 
+	 * @param moduleCode String The module code for the module you're searching for
+	 * @return String[][] Returns an array of strings containing the information if found or strings of "" if not found
+	 * 
 	 * [0] moduleCode; [1] paperName; [2] ELODeadline; [3] EMDeadline;
 	 * [4] MLDeadline; [5] IMDeadline; [6] EM_ID; [7] IM_ID;
 	 * [8] ELOCompleted; [9] EMCompleted; [10] MLCompleted; [11] IMCompleted
@@ -104,7 +109,6 @@ public class FormsDatabase extends Database
 					moduleForms[i][10] = parts[10];
 					moduleForms[i][11] = parts[11].substring(0, parts[11].length()-1);
 					
-					//System.out.println("moduleForms[i][11]"+moduleForms[i][11]);
 				}
 			}
 			fileReader.close();
@@ -121,6 +125,23 @@ public class FormsDatabase extends Database
 		}
 	}
 
+	/*
+	 * Inserts a new form into the database
+	 * 
+	 * @param moduleCode String Module code of the form
+	 * @param paperName String Paper name
+	 * @param ELODeadline String The ELO deadline
+	 * @param EMDeadline String The EM deadline
+	 * @param MLDeadline String The ML deadline
+	 * @param IMDeadline String The IM deadline
+	 * @param EM_ID String The EM ID
+	 * @param IM_ID String The IM ID
+	 * @param ELOCompleted String Recording of whether ELO has completed their task
+	 * @param EMCompleted String Recording of whether EM has completed their task
+	 * @param MLCompleted String Recording of whether ML has completed their task
+	 * @param IMCompleted String Recording of whether IM has completed their task
+	 * @returns boolean Returns true if the form was inserted correctly
+	 */
 	public boolean insertAssessmentPaper(String moduleCode, String paperName, String ELODeadline,
 			String EMDeadline, String MLDeadline, String IMDeadline, String EM_ID, String IM_ID,
 			String ELOCompleted, String EMCompleted, String MLCompleted, String IMCompleted)
@@ -145,6 +166,15 @@ public class FormsDatabase extends Database
 		return true;
 	}
 
+
+	/*
+	 * Deletes form from the database if the search term matches the search attribute
+	 * eg. module code = CM23303
+	 * 
+	 * @param moduleCode String The module code of the form you're searching for
+	 * @param paperName String The paper name of the form you're searching for
+	 * @return boolean Returns true if the form was found and deleted and false otherwise
+	 */
 	public boolean deleteAssessmentPaper(String moduleCode, String paperName)
 	{
 		
@@ -215,6 +245,12 @@ public class FormsDatabase extends Database
 		
 	}
 	
+	/*
+	 * Archives a form by writing the entry into an archive file
+	 * 
+	 * @param entry String Module entry to input into the file
+	 * @return boolean Returns true if form archived correctly, false otherwise
+	 */
 	public boolean archivePaper(String entry)
 	{
 		PrintWriter fileWriter = null;
@@ -232,6 +268,7 @@ public class FormsDatabase extends Database
 		return true;
 	}
 	
+	//DOES ANYONE EVEN USE THIS?
 	public String[] getAssessmentPapers(String searchAttribute, String searchValue)
 	{
 		String[] module = new String[12];
@@ -336,48 +373,112 @@ public class FormsDatabase extends Database
 		return module;
 	}
 
+	/*
+	 * Gets the module code from the database if the search term matches the search attribute
+	 * eg. module code = CM23303
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return String Returns the module code if found or strings of "" if not found
+	 */
 	public String getModuleCodeAssessmentPaper(String searchAttribute, String searchValue)
 	{
 		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
 		return moduleInfo[0];
 	}
 
+	/*
+	 * Gets the paper name from the database if the search term matches the search attribute
+	 * eg. module code = CM23303
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return String Returns the paper name if found or strings of "" if not found
+	 */
 	public String getPaperName(String searchAttribute, String searchValue)
 	{
 		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
 		return moduleInfo[1];
 	}
 
+	/*
+	 * Gets the ELO deadline from the database if the search term matches the search attribute
+	 * eg. module code = CM23303
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return String Returns the ELO deadline if found or strings of "" if not found
+	 */
 	public String getELODeadline(String searchAttribute, String searchValue)
 	{
 		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
 		return moduleInfo[2];
 	}
 
+	/*
+	 * Gets the EM deadline from the database if the search term matches the search attribute
+	 * eg. module code = CM23303
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return String Returns the EM deadline if found or strings of "" if not found
+	 */
 	public String getEMDeadline(String searchAttribute, String searchValue)
 	{
 		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
 		return moduleInfo[3];
 	}
 
+	/*
+	 * Gets the ML deadline from the database if the search term matches the search attribute
+	 * eg. module code = CM23303
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return String Returns the ML deadline if found or strings of "" if not found
+	 */
 	public String getMLDeadline(String searchAttribute, String searchValue)
 	{
 		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
 		return moduleInfo[4];
 	}
 
+	/*
+	 * Gets the IM deadline from the database if the search term matches the search attribute
+	 * eg. module code = CM23303
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return String Returns the IM deadline if found or strings of "" if not found
+	 */
 	public String getIMDeadline(String searchAttribute, String searchValue)
 	{
 		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
 		return moduleInfo[5];
 	}
 
+	/*
+	 * Gets the EM ID from the database if the search term matches the search attribute
+	 * eg. module code = CM23303
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return String Returns the EM ID if found or strings of "" if not found
+	 */
 	public String getEMID(String searchAttribute, String searchValue)
 	{
 		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
 		return moduleInfo[6];
 	}
 
+	/*
+	 * Gets the IM ID from the database if the search term matches the search attribute
+	 * eg. module code = CM23303
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return String Returns the IM ID if found or strings of "" if not found
+	 */
 	public String getIMID(String searchAttribute, String searchValue)
 	{
 		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);

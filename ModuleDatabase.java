@@ -11,14 +11,15 @@ public class ModuleDatabase extends Database
 
 
 	/*
-	 * Inserts a new staff into the database
-	 * @param fName String Staffs first name
-	 * @param lName String Staffs last name
-	 * @param email	String Staffs email
-	 * @param number String Staffs number
-	 * @param password String Staffs password
-	 * @param staffID String Staffs ID
-	 * @return boolean Returns true if the staff was successfully inserted and false otherwise
+	 * Inserts a new module into the database
+	 * @param moduleName String Module name
+	 * @param moduleCode String Module code
+	 * @param moduleCredits	String Module credits
+	 * @param numCoursework String Number of pieces of coursework
+	 * @param numExams String Number of exams
+	 * @param moduleLeader String Leader of the module
+	 * @param formType String Type of form
+	 * @return boolean Returns true if the module was successfully inserted and false otherwise
 	 */
 	public boolean insertModule(String moduleName, String moduleCode, String moduleCredits, String numCoursework, String numExams, String moduleLeader, String formType)
 	{
@@ -41,12 +42,12 @@ public class ModuleDatabase extends Database
 	}
 
 	/*
-	 * Deletes staff from the database if the search term matches the search attribute
-	 * eg. first name = Bob
+	 * Deletes module from the database if the search term matches the search attribute
+	 * eg. module name = Group Project
 	 * 
 	 * @param searchAttribute String The attribute you're searching
 	 * @param searchValue String The value you're searching the attribute for
-	 * @return boolean Returns true if staff was found and deleted and false otherwise
+	 * @return boolean Returns true if module was found and deleted and false otherwise
 	 */
 	public boolean deleteModule(String searchAttribute, String searchValue)
 	{
@@ -182,7 +183,7 @@ public class ModuleDatabase extends Database
 
 	/*
 	 * Gets modules name from the database if the search term matches the search attribute
-	 * eg. first name = Bob
+	 * eg. module name = Group Project
 	 * 
 	 * @param searchAttribute String The attribute you're searching
 	 * @param searchValue String The value you're searching the attribute for
@@ -195,8 +196,8 @@ public class ModuleDatabase extends Database
 	}
 
 	/*
-	 * Gets module code name from the database if the search term matches the search attribute
-	 * eg. first name = Bob
+	 * Gets module code from the database if the search term matches the search attribute
+	 * eg. module name = Group Project
 	 * 
 	 * @param searchAttribute String The attribute you're searching
 	 * @param searchValue String The value you're searching the attribute for
@@ -210,7 +211,7 @@ public class ModuleDatabase extends Database
 
 	/*
 	 * Gets module credits from the database if the search term matches the search attribute
-	 * eg. first name = Bob
+	 * eg. module name = Group Project
 	 * 
 	 * @param searchAttribute String The attribute you're searching
 	 * @param searchValue String The value you're searching the attribute for
@@ -239,7 +240,7 @@ public class ModuleDatabase extends Database
 
 	/*
 	 * Gets number of exams for a module from the database if the search term matches the search attribute
-	 * eg. first name = Bob
+	 * eg. module name = Group Project
 	 * 
 	 * @param searchAttribute String The attribute you're searching
 	 * @param searchValue String The value you're searching the attribute for
@@ -252,12 +253,12 @@ public class ModuleDatabase extends Database
 	}
 
 	/*
-	 * Gets number of exams for a module from the database if the search term matches the search attribute
-	 * eg. first name = Bob
+	 * Gets the module leader for a module from the database if the search term matches the search attribute
+	 * eg. module name = Group Project
 	 * 
 	 * @param searchAttribute String The attribute you're searching
 	 * @param searchValue String The value you're searching the attribute for
-	 * @return int Returns the number of exams and -1 if not found
+	 * @return String Returns the module leader and "" if not found
 	 */
 	public String getModuleLeader(String searchAttribute, String searchValue)
 	{
@@ -265,6 +266,14 @@ public class ModuleDatabase extends Database
 		return moduleInfo[5];
 	}
 
+	/*
+	 * Gets the form type for a module from the database if the search term matches the search attribute
+	 * eg. module name = Group Project
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return String Returns the form type and "" if not found
+	 */
 	public String getFormType(String searchAttribute, String searchValue)
 	{
 		String[] moduleInfo = getModule(searchAttribute, searchValue);
@@ -273,7 +282,7 @@ public class ModuleDatabase extends Database
 
 	/*
 	 * Gets all module information from the database if the search term matches the search attribute
-	 * eg. first name = Bob
+	 * eg. module name = Group Project
 	 * 
 	 * @param searchAttribute String The attribute you're searching
 	 * @param searchValue String The value you're searching the attribute for
@@ -364,6 +373,12 @@ public class ModuleDatabase extends Database
 		return module;
 	}
 	
+	/*
+	 * Archives a module by writing the entry into an archive file
+	 * 
+	 * @param entry String Module entry to input into the file
+	 * @return boolean Returns true if module archived correctly, false otherwise
+	 */
 	public boolean archiveModule(String entry)
 	{
 		PrintWriter fileWriter = null;

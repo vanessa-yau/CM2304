@@ -26,11 +26,13 @@ public class StaffDatabase extends Database
 
 	/*
 	 * Inserts a new staff into the database
-	 * @param fName String Staffs first name
+	 * 
 	 * @param lName String Staffs last name
-	 * @param email	String Staffs email
+	 * @param fName String Staffs first name
+	 * @param staffID Object Staff ID object
 	 * @param number String Staffs phone number
-	 * @param staffID String Staffs ID
+	 * @param email	String Staffs email
+	 * @param staffType String Staff type
 	 */
 	public final void insertStaff(String lName, String fName, Object staffID, String number, String email , String staffType)
 	{
@@ -49,7 +51,12 @@ public class StaffDatabase extends Database
 	}
          
         
-	
+	/*
+	 * Archives a staff by writing the entry into an archive file
+	 * 
+	 * @param entry String Staff entry to input into the file
+	 * @return boolean Returns true if staff archived correctly, false otherwise
+	 */
 	public boolean archiveStaff(String entry)
 	{
 		PrintWriter fileWriter = null;
@@ -278,7 +285,7 @@ public class StaffDatabase extends Database
 	 * 
 	 * @param searchAttribute String The attribute you're searching
 	 * @param searchValue String The value you're searching the attribute for
-	 * @return String Returns the ID if found or strings of "" if not found
+	 * @return String Returns the staff role if found or strings of "" if not found
 	 */
 	public String getStaffRole(String searchAttribute, String searchValue)
 	{
@@ -375,6 +382,11 @@ public class StaffDatabase extends Database
 		return staff;
 	}
 	
+	/*
+	 * Returns all staff recorded in the file
+	 * 
+	 * @returns String[][] Returns all staff entries in a file
+	 */
 	public String[][] getAllStaff()
 	{
 		
