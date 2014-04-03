@@ -1,3 +1,13 @@
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.Multipart;
+import javax.mail.Part;
+import javax.mail.internet.MimeBodyPart;
+import javax.swing.JFileChooser;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -11,6 +21,8 @@
 public class ReadEmailFrame extends javax.swing.JFrame {
     
     protected int state;
+    protected Message thisMessage;
+    private String replyTo;
     /**
      * Creates new form ReadEmailFrame
      */
@@ -47,6 +59,11 @@ public class ReadEmailFrame extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
         jButton5.setText("Reply");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         jLabel2.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
         jLabel2.setText("From:");
@@ -71,6 +88,11 @@ public class ReadEmailFrame extends javax.swing.JFrame {
         jTextField2.setEditable(false);
 
         jButton4.setText("Download");
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton3.setText("Log Out");
         jButton3.addActionListener(new java.awt.event.ActionListener() {
@@ -88,6 +110,11 @@ public class ReadEmailFrame extends javax.swing.JFrame {
         jLabel6.setText("Attachments:");
 
         jButton6.setText("Return to Inbox");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -182,6 +209,35 @@ public class ReadEmailFrame extends javax.swing.JFrame {
         state = 1;
     }//GEN-LAST:event_jButton3ActionPerformed
 
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        state = 2;
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        replyTo = jTextField3.getText();
+        state = 3;
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        String saveAt = "";
+        
+        JFileChooser chooser = new JFileChooser();
+        chooser.setDialogTitle("Select target directory");
+        chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int returnVal = chooser.showOpenDialog(new SendMailFrame());
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            saveAt = chooser.getSelectedFile().toString();
+        }
+        
+        try {
+            downloadAttachment(saveAt);
+        } 
+        
+        catch (IOException | MessagingException ex) {
+            Logger.getLogger(ReadEmailFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jButton4ActionPerformed
+
     /**
      * @param details
      */
@@ -194,7 +250,44 @@ public class ReadEmailFrame extends javax.swing.JFrame {
         jTextField2.setText(details[3]);
         jTextArea1.setText(details[4]);
         
+        if (jTextField2.getText().equals("")) {
+            jButton4.setEnabled(false);
+        }
+        
     }
+    
+    protected void downloadAttachment(String saveDirectory) throws IOException, MessagingException {
+        // content may contain attachments
+        Multipart multiPart = (Multipart) thisMessage.getContent();
+        int numberOfParts = multiPart.getCount();
+        for (int partCount = 0; partCount < numberOfParts; partCount++) {
+            MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
+            if (Part.ATTACHMENT.equalsIgnoreCase(part.getDisposition())) {
+                // this part is attachment
+                String fileName = part.getFileName();
+                
+                if (fileName.contains("/")) {
+                    int cutOff = fileName.lastIndexOf("/");
+                    fileName = fileName.substring(cutOff);
+                }
+                
+                else {
+                    fileName = "/" + fileName;
+                }
+                part.saveFile(saveDirectory + fileName);
+                System.out.println(saveDirectory + fileName);
+            }
+        }
+    }
+    
+    protected String getRecipient() {
+        return replyTo;
+    }
+    
+    protected void setMessage(Message message) {
+        thisMessage = message;
+    }
+    
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">

@@ -1,5 +1,5 @@
-
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -56,7 +56,7 @@ public class SendMailFrame extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
         jLabel1.setText("Send E-Mail");
 
-        jButton1.setText("Back");
+        jButton1.setText("Return to Inbox");
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
@@ -75,11 +75,13 @@ public class SendMailFrame extends javax.swing.JFrame {
         jLabel2.setFont(new java.awt.Font("Lucida Grande", 1, 13)); // NOI18N
         jLabel2.setText("To:");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        setComboBoxOption();
 
         jLabel3.setText("Subject Line:");
 
         jLabel4.setText("Attachment:");
+
+        jTextField2.setEditable(false);
 
         jButton4.setText("Attach");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -118,7 +120,7 @@ public class SendMailFrame extends javax.swing.JFrame {
                                 .addGap(18, 18, 18)
                                 .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
-                                .addGap(0, 322, Short.MAX_VALUE)
+                                .addGap(0, 255, Short.MAX_VALUE)
                                 .addComponent(jButton1)
                                 .addGap(18, 18, 18)
                                 .addComponent(jButton2)
@@ -198,32 +200,59 @@ public class SendMailFrame extends javax.swing.JFrame {
             newAttachment = chooser.getSelectedFile().getPath();
         } 
         
+        jTextField2.setEditable(true);
         jTextField2.setText(newAttachment);
+        jTextField2.setEditable(false);
     }//GEN-LAST:event_jButton4ActionPerformed
     
-    public void setComboBoxOption(String newOption) {
-        boolean isThere = false;
-        for (int i = 0; i < jComboBox1.getItemCount(); i++) {
-            if (newOption.equals(jComboBox1.getItemAt(i))) {
-                isThere = true;
-            }
-            
-            if (isThere) {
-                break;
-            }
-        }
+    private void setComboBoxOption() {
+        alyCode staff = new alyCode();
+        staff.getAllStaffNameEmail();
         
-        if (!isThere){ 
-            jComboBox1.addItem(newOption);
+        for (String[] staffNameEmail : staff.staffNameEmail) {
+            String first = staffNameEmail[0];
+            String last = staffNameEmail[1];
+            String email = staffNameEmail[2];
+            jComboBox1.addItem(first + " " + last + " - " + email);
         }
     }
     
-    public void sendingMail(String from, String password){ 
+    public boolean sendingMail(String from, String password){ 
         String attachment = jTextField2.getText();
         String whoTo = jComboBox1.getSelectedItem().toString();
+        int dashLocation = whoTo.lastIndexOf(" ");
+        whoTo = whoTo.substring(dashLocation);
+        
         String subject = jTextField1.getText();
         String content = jTextArea1.getText();
-        sendMail.sendEmail(from, password, whoTo, attachment, subject, content);
+        
+        if (subject.equals("")) {
+            int result = JOptionPane.showConfirmDialog(null, 
+                    "Are you sure you don't want a subject?", null, JOptionPane.YES_NO_OPTION);
+            if(result == JOptionPane.YES_OPTION) {
+                sendMail.sendEmail(from, password, whoTo, attachment, subject, content);
+                return true;
+            }
+            
+            else {
+                return false;
+            }
+        }
+        
+        if (content.equals("")) {
+            int result = JOptionPane.showConfirmDialog(null, 
+                    "Are you sure you don't want any text?", null, JOptionPane.YES_NO_OPTION);
+            if(result == JOptionPane.YES_OPTION) {
+                sendMail.sendEmail(from, password, whoTo, attachment, subject, content);
+                return true;
+            }
+            
+            else {
+                return false;
+            }
+        }
+        
+        return true;
     }
     /**
      * @param args the command line arguments

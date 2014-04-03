@@ -83,7 +83,7 @@ public class SendMailTLS {
             multipart.addBodyPart(messageBodyPart);  
             
             // Part two is attachment  
-            if (fileAttachment != "") {
+            if (!"".equals(fileAttachment)) {
             	messageBodyPart = new MimeBodyPart();  
             	DataSource source = new FileDataSource(fileAttachment);  
             	messageBodyPart.setDataHandler(new DataHandler(source));  

@@ -6,17 +6,17 @@ import java.util.ArrayList;
 import java.util.Properties;
  
 import javax.mail.Address;
-import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.NoSuchProviderException;
+import javax.mail.Part;
 import javax.mail.Session;
 import javax.mail.Store;
 import javax.mail.internet.MimeBodyPart;
-
 import org.jsoup.Jsoup;
+
 
 public class EmailAttachmentReceiver {
     
@@ -24,9 +24,10 @@ public class EmailAttachmentReceiver {
     private String userName;
     private String password;
     private String input;
-    private Folder folderInbox;
+    protected Folder folderInbox;
     protected Message[] arrayMessages;
     protected ArrayList<String> fromAddresses;
+    protected ArrayList<String> textContent;
     protected ArrayList<String> subjectArray;
     protected ArrayList<String> dateArray;
     protected ArrayList<String> attachmentArray;
@@ -149,7 +150,7 @@ public class EmailAttachmentReceiver {
         }
     }
     
-    public void hasAttachment() throws MessagingException, IOException {
+    public void messagesAttachment() throws MessagingException, IOException {
         
         attachmentArray = new ArrayList<>();
         for (Message message : arrayMessages) {
@@ -193,98 +194,82 @@ public class EmailAttachmentReceiver {
         //toDelete.setFlag(Flags.Flag.DELETED, true);
     }
     
-    // Again, fairly obvious...
-    public void downloadAttachment(String saveDirectory) throws ParseException, MessagingException, IOException {
+    public void messagesContent() throws MessagingException, IOException {
+        
+        textContent = new ArrayList<>();
+        for (Message message : arrayMessages) {
             
-        for (int i = 0; i < arrayMessages.length; i++) {
-            Message message = arrayMessages[i];
-
-                Address[] fromAddress = message.getFrom();
-                String from = fromAddress[0].toString();
-                String subject = message.getSubject();
-                String sentDate = message.getSentDate().toString();
- 
-                String contentType = message.getContentType();
-                String messageContent = "";
- 
-                // store attachment file name, separated by comma
-                String attachFiles = "";
- 
-                if (contentType.contains("multipart")) {
-                	
-                    // content may contain attachments
-                	Multipart multiPart = (Multipart) message.getContent();
-                	int numberOfParts = multiPart.getCount();
-                	for (int partCount = 0; partCount < numberOfParts; partCount++) {
-                            MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
-                            String partContentType = part.getContentType();
-                            partContentType = partContentType.substring(0, 11);
-                            if (partContentType.equalsIgnoreCase("APPLICATION")) {
-                        	
-                                // this part is attachment
-                                String fileName = part.getFileName();
-                                attachFiles += fileName + ", ";
-                                
-                                if (fileName.contains("/")) {
-                                    int cutOff = fileName.lastIndexOf("/");
-                                    fileName = fileName.substring(cutOff);
-                                }
-                                
-                                fileName = "/" + fileName;
-                                part.saveFile(saveDirectory + fileName);
-                            } 
-                                
-                            else {
-                        	
-                                // this part may be the message content
-                                messageContent = part.getContent().toString();
-                			
-                            }
-                	}
-                		
-                        // Once an attachment is downloaded, it is removed from the list of files attached
-                	if (attachFiles.length() > 1) {
-                            
-                            attachFiles = attachFiles.substring(0, attachFiles.length() - 2);
-                	}
-                    
-                } 
-                	
-                // Normal text you'd normally get in an e-mail
-                else if (contentType.contains("text/plain")) {
-                		
-                    Object content = message.getContent();
-                    if (content != null) {
-                	messageContent = content.toString();
-                    }
+            Multipart multiPart = (Multipart) message.getContent();
+            int numberOfParts = multiPart.getCount();
+            String text = "";
+            for (int partCount = 0; partCount < numberOfParts; partCount++) {
+                MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
+                String thisPart = getText(part);
+                if (thisPart != null && !thisPart.contains("<div>")) {
+                    text += thisPart;
                 }
-                	
-                // On the off-chance we get a HTML e-mail
-                // Haven't got it to work yet, but when/ if I do I'll upload a revised version
-                else if (contentType.contains("text/html")) {
-                    
-                    Object content = message.getContent();
-                    if (content != null) {
-                	messageContent = content.toString();
-                	messageContent = Jsoup.parse(messageContent).text();
-                    }
-                }
-                
-                // print out details of each message
-                System.out.println("Message #" + (i + 1) + ":");
-                System.out.println("\t From: " + from);
-                System.out.println("\t Subject: " + subject);
-                System.out.println("\t Sent Date: " + sentDate);
-                System.out.println("\t Message: " + messageContent);
-                System.out.println("\t Attachments: " + attachFiles);
+            }
+            
+            textContent.add(text);
         }
+    }
+    
+    public String getText(Part p) throws MessagingException, IOException {
+        if (p.isMimeType("text/*")) {
+            String s = (String)p.getContent();
+            return s;
+        }
+
+        else if (p.isMimeType("multipart/alternative")) {
+            // prefer html text over plain text
+            Multipart mp = (Multipart)p.getContent();
+            String text = null;
+            for (int i = 0; i < mp.getCount(); i++) {
+                Part bp = mp.getBodyPart(i);
+                if (bp.isMimeType("text/plain")) {
+                    if (text == null) {
+                        text = getText(bp);
+                        return text;
+                    }
+                } 
+                
+                else if (bp.isMimeType("text/html")) {
+                    String s = getText(bp);
+                    if (s != null){
+                        String html = (String) bp.getContent();
+                        String result = Jsoup.parse(html).text();
+                        return result;
+                    }
+                } 
+                
+                else {
+                    return getText(bp);
+                }
+            }
+            return text;
+            
+        } 
+        
+        else if (p.isMimeType("multipart/*")) {
+            Multipart mp = (Multipart)p.getContent();
+            for (int i = 0; i < mp.getCount(); i++) {
+                String s = getText(mp.getBodyPart(i));
+                if (s != null) {
+                    return s;
+                }
+            }
+        }
+
+        return null;
+    }
+    
+    
+        
  
         // disconnect
-        folderInbox.close(false);
-        store.close();
-       
-    }
- 
+        //folderInbox.close(false);
+        //store.close();
+        
     public static void main(String[] args) throws ParseException, MessagingException, IOException {
     	
         //String port = "993";

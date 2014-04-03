@@ -1,13 +1,10 @@
-import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.mail.Message;
 import javax.mail.MessagingException;
-import javax.mail.Multipart;
-import javax.mail.Part;
-import javax.mail.internet.MimeBodyPart;
+import javax.swing.JOptionPane;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -17,7 +14,7 @@ import javax.mail.internet.MimeBodyPart;
 
 /**
  *
- * @author Pharaoh
+ * @author Aly Abdelfattah-Elmakhzangui
  */
 public class EmailInboxFrame extends javax.swing.JFrame {
 
@@ -25,6 +22,7 @@ public class EmailInboxFrame extends javax.swing.JFrame {
      * Creates new form EmailInbox
      */
     protected int state;
+    protected Message message;
     private EmailAttachmentReceiver receiveEmail;
 
     public EmailInboxFrame() {
@@ -286,12 +284,31 @@ public class EmailInboxFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
-        System.out.println(selectedEmails());
-        state = 2;
+        int selectedMail = jTable1.getSelectedRow();
+        int numberSelected = jTable1.getSelectedRowCount();
+        if (jTable1.getValueAt(selectedMail, 0) != null && numberSelected == 1) {
+            state = 2;
+        }
+        
+        else {
+            JOptionPane.showMessageDialog(new EmailInboxFrame(), 
+                    "Please do not select emtpy or multiple rows", 
+                    "Selection error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        state = 3;
+        int selectedMail = jTable1.getSelectedRow();
+        int numberSelected = jTable1.getSelectedRowCount();
+        if (jTable1.getValueAt(selectedMail, 0) != null && numberSelected == 1) {
+            state = 3;
+        }
+        
+        else {
+            JOptionPane.showMessageDialog(new EmailInboxFrame(), 
+                    "Please do not select emtpy or multiple rows", 
+                    "Selection error", JOptionPane.ERROR_MESSAGE);
+        }
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void logOutHandler(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutHandler
@@ -300,16 +317,27 @@ public class EmailInboxFrame extends javax.swing.JFrame {
 
     private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
         int[] toBeDeleted = jTable1.getSelectedRows();
+        boolean goAhead = true;
         for (int i = 0; i < toBeDeleted.length; i++) {
-            try {
-                receiveEmail.deleteEmail(receiveEmail.arrayMessages[receiveEmail.arrayMessages.length - toBeDeleted[i] - 1]);
-                for (int j = 0; j < 4; j++) {
-                    jTable1.setValueAt("", toBeDeleted[i], j);
-                }
-            } catch (MessagingException ex) {
-                Logger.getLogger(EmailInboxFrame.class.getName()).log(Level.SEVERE, null, ex);
+            if (jTable1.getValueAt(toBeDeleted[i], 0) == null) {
+                goAhead = false;
+                break;
             }
-            //System.out.println(receiveEmail.subjectArray.get(receiveEmail.arrayMessages.length - toBeDeleted[i] - 1));
+        }
+        
+        if (goAhead) {
+            for (int i = 0; i < toBeDeleted.length; i++) {
+                try {
+                    receiveEmail.deleteEmail(receiveEmail.arrayMessages[receiveEmail.arrayMessages.length - toBeDeleted[i] - 1]);
+                    for (int j = 0; j < 4; j++) {
+                        jTable1.setValueAt(null, toBeDeleted[i], j);
+                    }
+                } 
+                
+                catch (MessagingException ex) {
+                    Logger.getLogger(EmailInboxFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
         }
         
         jTable1.updateUI();
@@ -323,7 +351,8 @@ public class EmailInboxFrame extends javax.swing.JFrame {
             receiveEmail.getFromAddress();
             receiveEmail.getDate();
             receiveEmail.getSubject();
-            receiveEmail.hasAttachment();
+            receiveEmail.messagesAttachment();
+            receiveEmail.messagesContent();
         }
 
         catch(MessagingException e) {
@@ -335,7 +364,14 @@ public class EmailInboxFrame extends javax.swing.JFrame {
             jTable1.setValueAt(receiveEmail.subjectArray.get(i), count, 2);
             jTable1.setValueAt(receiveEmail.fromAddresses.get(i), count, 0);
             jTable1.setValueAt(receiveEmail.dateArray.get(i), count, 1);
-            jTable1.setValueAt(receiveEmail.attachmentArray.get(i), count, 3);
+            
+            String attachment = receiveEmail.attachmentArray.get(i);
+            if (attachment.contains("/")) {
+                int cutOff = attachment.lastIndexOf("/");
+                attachment = attachment.substring(cutOff + 1);
+            }
+            
+            jTable1.setValueAt(attachment, count, 3);
             count--;
         }
     }
@@ -353,95 +389,37 @@ public class EmailInboxFrame extends javax.swing.JFrame {
         return true;
     }
     
-    public String selectedEmails() {
+    protected String selectedEmails() {
         int selectedPos = jTable1.getSelectedRow();
         String selectedMail = receiveEmail.fromAddresses.get(receiveEmail.arrayMessages.length - selectedPos - 1);
         return selectedMail;
     }
     
-    public String[] whichEmailToRead() throws IOException, MessagingException {
+    protected String[] whichEmailToRead() throws IOException, MessagingException {
         String[] emailDetails = new String[5];
         int selectedEmail = jTable1.getSelectedRow();
         
         emailDetails[0] = receiveEmail.fromAddresses.get(receiveEmail.arrayMessages.length - selectedEmail - 1);
         emailDetails[1] = receiveEmail.subjectArray.get(receiveEmail.arrayMessages.length - selectedEmail - 1);
         emailDetails[2] = receiveEmail.dateArray.get(receiveEmail.arrayMessages.length - selectedEmail - 1);
-                
-        Message selectedMessage = receiveEmail.arrayMessages[receiveEmail.arrayMessages.length - selectedEmail - 1];
-        String contentType = selectedMessage.getContentType();
-        String attachFiles = "";
-        String actualMessage = "";
-        if (contentType.contains("multipart")) {
-            // content may contain attachments
-            Multipart multiPart = (Multipart) selectedMessage.getContent();
-            int numberOfParts = multiPart.getCount();
-            for (int partCount = 0; partCount < numberOfParts; partCount++) {
-                MimeBodyPart part = (MimeBodyPart) multiPart.getBodyPart(partCount);
-                /*if (part.isMimeType("text/*")) {
-                    String s = (String)part.getContent();
-                    //textIsHtml = p.isMimeType("text/html");
-                    //return s;
-                }
-
-                if (part.isMimeType("multipart/alternative")) {
-                // prefer html text over plain text
-                    Multipart mp = (Multipart)part.getContent();
-                    String text = null;
-                    for (int i = 0; i < mp.getCount(); i++) {
-                        Part bp = mp.getBodyPart(i);
-                        if (bp.isMimeType("text/plain")) {
-                            if (text == null)
-                                text = getText(bp);
-                            continue;
-                            } 
-                        
-                        else if (bp.isMimeType("text/html")) {
-                            String s = getText(bp);
-                            if (s != null)
-                                return s;
-                            } 
-                        
-                        else {
-                            return getText(bp);
-                        }
-                    }
-                    return text;
-                } else if (p.isMimeType("multipart/*")) {
-                    Multipart mp = (Multipart)p.getContent();
-                    for (int i = 0; i < mp.getCount(); i++) {
-                        String s = getText(mp.getBodyPart(i));
-                        if (s != null)
-                            return s;
-                    }
-                }*/
-                String partContentType = part.getContentType();
-                System.out.println(partContentType);
-                partContentType = partContentType.substring(0, 11);
-                
-                if (partContentType.equalsIgnoreCase("APPLICATION")) {
-                    // this part is attachment
-                    String fileName = part.getFileName();
-                    if (fileName.contains("/")) {
-                        int cutOff = fileName.lastIndexOf("/");
-                        fileName = fileName.substring(cutOff + 1);
-                    }
-                    
-                    fileName = "/" + fileName;
-                    attachFiles += fileName + ", ";
-                }
-                
-                else {
-                    // this part may be the message content
-                    actualMessage = part.getContent().toString();
-                }
-            }
+        
+        String thisAttachment = receiveEmail.attachmentArray.get(receiveEmail.arrayMessages.length - selectedEmail - 1);
+        if (thisAttachment.contains("/")) {
+            int cutOff = thisAttachment.lastIndexOf("/");
+            thisAttachment = thisAttachment.substring(cutOff + 1);
         }
         
-        emailDetails[3] = attachFiles;
-        emailDetails[4] = actualMessage;
+        emailDetails[3] = thisAttachment;
+        emailDetails[4] = receiveEmail.textContent.get(receiveEmail.arrayMessages.length - selectedEmail - 1);
+        
+        message = receiveEmail.arrayMessages[receiveEmail.arrayMessages.length - selectedEmail - 1];
         
         return emailDetails;
         
+    }
+    
+    protected Message getMessage() {
+        return message;
     }
     
     /**

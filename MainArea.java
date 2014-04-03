@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.text.ParseException;
+import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.swing.JOptionPane;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -48,6 +50,12 @@ public class MainArea {
         
         if (!valid) {
             inbox.dispose();
+            
+            JOptionPane.showMessageDialog(new LoginGUI(), 
+                    "There was a problem with your username or password. Please enter valid details.", 
+                    "Login Error", JOptionPane.ERROR_MESSAGE);
+            
+            loginWindow();
         }
         
         inbox.emailInput();
@@ -72,8 +80,9 @@ public class MainArea {
             
             else if (inbox.state == 3) {
                 String[] details = inbox.whichEmailToRead();
+                Message message = inbox.getMessage();
                 inbox.dispose();
-                readEmailFrame(details);
+                readEmailFrame(message, details);
                 stayHere = false;
             }
             
@@ -85,7 +94,6 @@ public class MainArea {
     
     public void sendEmailFrame(String to) throws ParseException, IOException, MessagingException {
         SendMailFrame sendMail = new SendMailFrame();
-        sendMail.setComboBoxOption(to);
         sendMail.setVisible(true);
         
         boolean stayHere = true;
@@ -94,24 +102,28 @@ public class MainArea {
             
             count++;
             if (sendMail.state == 1) {
-                sendMail.state = 0;
                 sendMail.dispose();
                 stayHere = false;
             }
             
             else if (sendMail.state == 2) {
-                sendMail.state = 0;
                 sendMail.dispose();
                 emailInbox();
                 stayHere = false;
             }
             
             else if (sendMail.state == 3) {
-                sendMail.state = 0;
-                sendMail.sendingMail(username, password);
-                sendMail.dispose();
-                emailInbox();
-                stayHere = false;
+                boolean hasSent = sendMail.sendingMail(username, password);
+                if (hasSent) {
+                    sendMail.dispose();
+                    emailInbox();
+                    stayHere = false;
+                }
+                
+                else if (!hasSent) {
+                    sendMail.state = 0;
+                    stayHere = true;
+                }
             }
             
             if (count == 1000) {
@@ -120,9 +132,10 @@ public class MainArea {
         }
     }
     
-    public void readEmailFrame(String[] toOpen) {
+    public void readEmailFrame(Message message, String[] toOpen) throws ParseException, IOException, MessagingException {
         ReadEmailFrame read = new ReadEmailFrame();
         read.fillDetails(toOpen);
+        read.setMessage(message);
         read.setVisible(true);
         
         boolean stayHere = true;
@@ -133,6 +146,19 @@ public class MainArea {
             
             if (read.state == 1) { 
                 read.dispose();
+                stayHere = false;
+            }
+            
+            if (read.state == 2) { 
+                read.dispose();
+                emailInbox();
+                stayHere = false;
+            }
+            
+            if (read.state == 3) {
+                String replyingTo = read.getRecipient();
+                read.dispose();
+                sendEmailFrame(replyingTo);
                 stayHere = false;
             }
             
