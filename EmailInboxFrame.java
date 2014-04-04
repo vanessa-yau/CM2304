@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
  */
 public class EmailInboxFrame extends javax.swing.JFrame {
     
-    protected byte newState; // indication of which page is next
+    protected byte nextState; // indication of which page is next
     protected Message message; // this message is the one selected to open up to read
     private EmailAttachmentReceiver receiveEmail; // a pointer to EmailAttachmentReceiver, allows for increased functionality
 
@@ -291,7 +291,7 @@ public class EmailInboxFrame extends javax.swing.JFrame {
         
         // can only select 1 row at a time, and only rows with values in them
         if (jTable1.getValueAt(selectedMail, 0) != null && numberSelected == 1) {
-            newState = 4;
+            nextState = 4;
         }
         
         else {
@@ -312,7 +312,7 @@ public class EmailInboxFrame extends javax.swing.JFrame {
         
         // can only select 1 row at a time, and only rows with values in them
         if (jTable1.getValueAt(selectedMail, 0) != null && numberSelected == 1) {
-            newState = 5;
+            nextState = 5;
         }
         
         else {
@@ -324,7 +324,7 @@ public class EmailInboxFrame extends javax.swing.JFrame {
 
     private void logOutHandler(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutHandler
         // tell main area to log out
-        newState = -1;
+        nextState = -1;
     }//GEN-LAST:event_logOutHandler
 
     private void deleteMailButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteMailButtonActionPerformed

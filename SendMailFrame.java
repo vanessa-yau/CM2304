@@ -17,7 +17,7 @@ public class SendMailFrame extends javax.swing.JFrame {
      * Creates new form SendMailFrame
      */
     
-    protected byte newState;
+    protected byte nextState;
     private SendMailTLS sendMail;
     
     public SendMailFrame() {
@@ -179,17 +179,17 @@ public class SendMailFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void logOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutButtonActionPerformed
-        newState = -1;
+        nextState = -1;
     }//GEN-LAST:event_logOutButtonActionPerformed
 
     private void returnToInboxButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnToInboxButtonActionPerformed
-        newState = 3;
+        nextState = 3;
     }//GEN-LAST:event_returnToInboxButtonActionPerformed
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
         // creates pointer to SendMailTLS to get functionality
         sendMail = new SendMailTLS();
-        newState = 4;
+        nextState = 4;
     }//GEN-LAST:event_sendButtonActionPerformed
 
     private void attachButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_attachButtonActionPerformed

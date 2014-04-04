@@ -21,7 +21,7 @@ import javax.swing.JOptionPane;
  */
 public class ReadEmailFrame extends javax.swing.JFrame {
     
-    protected byte newState; // indication of which page is next
+    protected byte nextState; // indication of which page is next
     protected Message thisMessage; // this message is the one selected to open up to read
     private String replyTo; // the email address you will reply to
     
@@ -208,17 +208,17 @@ public class ReadEmailFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void logOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutButtonActionPerformed
-        newState = 1;
+        nextState = 1;
     }//GEN-LAST:event_logOutButtonActionPerformed
 
     private void returnToInboxButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnToInboxButtonActionPerformed
-        newState = 3;
+        nextState = 3;
     }//GEN-LAST:event_returnToInboxButtonActionPerformed
 
     private void replyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_replyButtonActionPerformed
         // get the email address in the "from" text field
         replyTo = jTextField3.getText();
-        newState = 5;
+        nextState = 5;
     }//GEN-LAST:event_replyButtonActionPerformed
 
     private void downloadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadButtonActionPerformed
