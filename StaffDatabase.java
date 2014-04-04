@@ -6,6 +6,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 
@@ -69,6 +72,16 @@ public class StaffDatabase extends Database
 			e.printStackTrace();
 			return false;
 		}
+		
+		entry.replace(';', ',');
+		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		Date date = new Date();
+		
+		
+		entry += dateFormat.format(date);
+		entry += ";";
+		
 		fileWriter.println(entry);
 		fileWriter.close();
 		return true;

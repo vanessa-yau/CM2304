@@ -1,12 +1,13 @@
+import java.io.BufferedInputStream;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class FormsDatabase extends Database
@@ -263,6 +264,16 @@ public class FormsDatabase extends Database
 			e.printStackTrace();
 			return false;
 		}
+		
+		entry.replace(';', ',');
+		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		Date date = new Date();
+		
+		
+		entry += dateFormat.format(date);
+		entry += ";";
+		
 		fileWriter.println(entry);
 		fileWriter.close();
 		return true;
@@ -484,5 +495,4 @@ public class FormsDatabase extends Database
 		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
 		return moduleInfo[7];
 	}
-	
 }
