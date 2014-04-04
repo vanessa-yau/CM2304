@@ -17,34 +17,26 @@ public class StaffDatabase extends Database
 
 	File staffTable;
 
-	public StaffDatabase(){
-
-		staffTable = new File("staff.txt");
-	}
-
-	/*Returns staff database*/
-	public File getStaffTable(){            
-		return staffTable;
-	}
+	public StaffDatabase(){}
 
 	/*
 	 * Inserts a new staff into the database
 	 * 
 	 * @param lName String Staffs last name
 	 * @param fName String Staffs first name
-	 * @param staffID Object Staff ID object
-	 * @param number String Staffs phone number
 	 * @param email	String Staffs email
+	 * @param number String Staffs phone number
+	 * @param staffID Object Staff ID object
 	 * @param staffType String Staff type
 	 */
-	public final void insertStaff(String lName, String fName, Object staffID, String number, String email , String staffType)
+	public final void insertStaff(String lName, String fName, String email, String number, Object staffID , String staffType)
 	{
 		BufferedWriter newStaff;
 
 		try 
 		{
 			newStaff = new BufferedWriter(new FileWriter(staffTable, true));                    
-			newStaff.write(lName+","+fName+","+staffID+","+number+","+email+","+staffType+ "\n");
+			newStaff.write(lName+","+fName+","+email+","+number+","+staffID+","+staffType+ "\n");
 			newStaff.close();
 		} 
 		catch (IOException e) 

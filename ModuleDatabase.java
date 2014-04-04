@@ -21,10 +21,10 @@ public class ModuleDatabase extends Database
 	 * @param numCoursework String Number of pieces of coursework
 	 * @param numExams String Number of exams
 	 * @param moduleLeader String Leader of the module
-	 * @param formType String Type of form
+	 * @param weighting String module weighting 
 	 * @return boolean Returns true if the module was successfully inserted and false otherwise
 	 */
-	public boolean insertModule(String moduleName, String moduleCode, String moduleCredits, String numCoursework, String numExams, String moduleLeader, String formType)
+	public boolean insertModule(String moduleName, String moduleCode, String moduleCredits, String numCoursework, String numExams, String moduleLeader, String weighting)
 	{
 		fileReader.close();
 
@@ -37,7 +37,7 @@ public class ModuleDatabase extends Database
 		{
 			e.printStackTrace();
 		}
-		fileWriter.println(moduleName+","+moduleCode+","+moduleCredits+","+numCoursework+","+numExams+","+moduleLeader+","+formType+";");
+		fileWriter.println(moduleName+","+moduleCode+","+moduleCredits+","+numCoursework+","+numExams+","+moduleLeader+","+weighting+";");
 		fileWriter.close();
 
 		resetFileReader();
@@ -81,7 +81,7 @@ public class ModuleDatabase extends Database
 		{
 			attribute = 5;
 		}
-		else if(searchAttribute.compareToIgnoreCase("form type") == 0)
+		else if(searchAttribute.compareToIgnoreCase("weighting") == 0)
 		{
 			attribute = 6;
 		}
@@ -270,14 +270,14 @@ public class ModuleDatabase extends Database
 	}
 
 	/*
-	 * Gets the form type for a module from the database if the search term matches the search attribute
+	 * Gets the weighting for a module from the database if the search term matches the search attribute
 	 * eg. module name = Group Project
 	 * 
 	 * @param searchAttribute String The attribute you're searching
 	 * @param searchValue String The value you're searching the attribute for
 	 * @return String Returns the form type and "" if not found
 	 */
-	public String getFormType(String searchAttribute, String searchValue)
+	public String getWeighting(String searchAttribute, String searchValue)
 	{
 		String[] moduleInfo = getModule(searchAttribute, searchValue);
 		return moduleInfo[6];
@@ -291,7 +291,7 @@ public class ModuleDatabase extends Database
 	 * @param searchValue String The value you're searching the attribute for
 	 * @return String[] Returns an array of strings containing the information if found or strings of "" if not found
 	 * [0] = module name; [1] = module code; [2] = credits; [3] = num coursework; [4] = num exams
-	 * [5] = module leader; [6] = form type
+	 * [5] = module leader; [6] = weighting
 	 */
 	public String[] getModule(String searchAttribute, String searchValue)
 	{
@@ -323,7 +323,7 @@ public class ModuleDatabase extends Database
 		{
 			attribute = 5;
 		}
-		else if(searchAttribute.compareToIgnoreCase("form type") == 0)
+		else if(searchAttribute.compareToIgnoreCase("weighting") == 0)
 		{
 			attribute = 6;
 		}
