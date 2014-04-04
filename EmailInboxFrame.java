@@ -17,14 +17,12 @@ import javax.swing.JOptionPane;
  * @author Aly Abdelfattah-Elmakhzangui
  */
 public class EmailInboxFrame extends javax.swing.JFrame {
+    
+    protected byte newState; // indication of which page is next
+    protected Message message; // this message is the one selected to open up to read
+    private EmailAttachmentReceiver receiveEmail; // a pointer to EmailAttachmentReceiver, allows for increased functionality
 
-    /**
-     * Creates new form EmailInbox
-     */
-    protected int state;
-    protected Message message;
-    private EmailAttachmentReceiver receiveEmail;
-
+    // create the frame and all the components
     public EmailInboxFrame() {
         initComponents();
     }
@@ -40,12 +38,12 @@ public class EmailInboxFrame extends javax.swing.JFrame {
 
         jButton4 = new javax.swing.JButton();
         jPanel1 = new javax.swing.JPanel();
-        jButton6 = new javax.swing.JButton();
-        jButton5 = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
+        deleteMailButton = new javax.swing.JButton();
+        sendEmailButton = new javax.swing.JButton();
+        openEmailButton = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
-        jButton3 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        logOutButton = new javax.swing.JButton();
+        mainMenuButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
 
@@ -55,38 +53,38 @@ public class EmailInboxFrame extends javax.swing.JFrame {
         setMinimumSize(new java.awt.Dimension(800, 600));
         setResizable(false);
 
-        jButton6.setText("Delete Email");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        deleteMailButton.setText("Delete Email");
+        deleteMailButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                deleteMailButtonActionPerformed(evt);
             }
         });
 
-        jButton5.setText("Send Email");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        sendEmailButton.setText("Send Email");
+        sendEmailButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                sendEmailButtonActionPerformed(evt);
             }
         });
 
-        jButton1.setText("Open Email");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        openEmailButton.setText("Open Email");
+        openEmailButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                openEmailButtonActionPerformed(evt);
             }
         });
 
         jLabel3.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
         jLabel3.setText("Email Inbox");
 
-        jButton3.setText("Log Out");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        logOutButton.setText("Log Out");
+        logOutButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 logOutHandler(evt);
             }
         });
 
-        jButton2.setText("Main Menu");
+        mainMenuButton.setText("Main Menu");
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -210,7 +208,6 @@ public class EmailInboxFrame extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jTable1.setRowSelectionAllowed(true);
         jTable1.setSelectionMode(javax.swing.ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         jTable1.setShowGrid(true);
         jTable1.getTableHeader().setReorderingAllowed(false);
@@ -228,17 +225,17 @@ public class EmailInboxFrame extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(331, 331, 331)
-                        .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(mainMenuButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addComponent(logOutButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addGap(46, 46, 46))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(196, 196, 196)
-                .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(openEmailButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(sendEmailButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(deleteMailButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(219, 219, 219))
         );
         jPanel1Layout.setVerticalGroup(
@@ -247,15 +244,15 @@ public class EmailInboxFrame extends javax.swing.JFrame {
                 .addGap(38, 38, 38)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(mainMenuButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(logOutButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 398, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(41, 41, 41)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(openEmailButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(sendEmailButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(deleteMailButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(39, 39, 39))
         );
 
@@ -283,11 +280,18 @@ public class EmailInboxFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    // what to do if the send email button is pressed
+    private void sendEmailButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendEmailButtonActionPerformed
+        
+        // get the position in the table of the selected row
         int selectedMail = jTable1.getSelectedRow();
+        
+        // number of selected rows
         int numberSelected = jTable1.getSelectedRowCount();
+        
+        // can only select 1 row at a time, and only rows with values in them
         if (jTable1.getValueAt(selectedMail, 0) != null && numberSelected == 1) {
-            state = 2;
+            newState = 4;
         }
         
         else {
@@ -295,13 +299,20 @@ public class EmailInboxFrame extends javax.swing.JFrame {
                     "Please do not select emtpy or multiple rows", 
                     "Selection error", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_jButton5ActionPerformed
-
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_sendEmailButtonActionPerformed
+    
+    // what to do if someone wants to open an email
+    private void openEmailButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openEmailButtonActionPerformed
+        
+        // get the position in the table of the selected row
         int selectedMail = jTable1.getSelectedRow();
+        
+        // number of selected rows
         int numberSelected = jTable1.getSelectedRowCount();
+        
+        // can only select 1 row at a time, and only rows with values in them
         if (jTable1.getValueAt(selectedMail, 0) != null && numberSelected == 1) {
-            state = 3;
+            newState = 5;
         }
         
         else {
@@ -309,14 +320,19 @@ public class EmailInboxFrame extends javax.swing.JFrame {
                     "Please do not select emtpy or multiple rows", 
                     "Selection error", JOptionPane.ERROR_MESSAGE);
         }
-    }//GEN-LAST:event_jButton1ActionPerformed
+    }//GEN-LAST:event_openEmailButtonActionPerformed
 
     private void logOutHandler(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutHandler
-        state = 1;
+        // tell main area to log out
+        newState = -1;
     }//GEN-LAST:event_logOutHandler
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+    private void deleteMailButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteMailButtonActionPerformed
+        
+        // number of selected rows
         int[] toBeDeleted = jTable1.getSelectedRows();
+        
+        // check that none of the rows set tobe deleted have already been deleted
         boolean goAhead = true;
         for (int i = 0; i < toBeDeleted.length; i++) {
             if (jTable1.getValueAt(toBeDeleted[i], 0) == null) {
@@ -330,6 +346,7 @@ public class EmailInboxFrame extends javax.swing.JFrame {
                 try {
                     receiveEmail.deleteEmail(receiveEmail.arrayMessages[receiveEmail.arrayMessages.length - toBeDeleted[i] - 1]);
                     for (int j = 0; j < 4; j++) {
+                        // to represent deletion in the table, remove values
                         jTable1.setValueAt(null, toBeDeleted[i], j);
                     }
                 } 
@@ -341,12 +358,12 @@ public class EmailInboxFrame extends javax.swing.JFrame {
         }
         
         jTable1.updateUI();
-    }//GEN-LAST:event_jButton6ActionPerformed
+    }//GEN-LAST:event_deleteMailButtonActionPerformed
     
     protected void emailInput() throws IOException {
 
         try {
-            
+            // get all information from the inbox
             receiveEmail.readInbox();
             receiveEmail.getFromAddress();
             receiveEmail.getDate();
@@ -359,12 +376,14 @@ public class EmailInboxFrame extends javax.swing.JFrame {
             System.out.println("NOPE");
         }
         
+        // set data in the table
         int count = receiveEmail.arrayMessages.length - 1;
         for (int i = 0; i < receiveEmail.arrayMessages.length; i++) {
             jTable1.setValueAt(receiveEmail.subjectArray.get(i), count, 2);
             jTable1.setValueAt(receiveEmail.fromAddresses.get(i), count, 0);
             jTable1.setValueAt(receiveEmail.dateArray.get(i), count, 1);
             
+            // make attachments neater by removing path
             String attachment = receiveEmail.attachmentArray.get(i);
             if (attachment.contains("/")) {
                 int cutOff = attachment.lastIndexOf("/");
@@ -372,12 +391,15 @@ public class EmailInboxFrame extends javax.swing.JFrame {
             }
             
             jTable1.setValueAt(attachment, count, 3);
+            
+            // count-- allows the emails to be presented in order of newest to oldest
             count--;
         }
     }
     
     protected boolean canConnect(String a, String b) throws ParseException {
         
+        // essentailly check that the email address provided is valid
         receiveEmail = new EmailAttachmentReceiver();
         receiveEmail.setLoginDetails(a, b);
         boolean accepted = receiveEmail.connect();
@@ -389,12 +411,14 @@ public class EmailInboxFrame extends javax.swing.JFrame {
         return true;
     }
     
+    // use to determine which email address to send email to
     protected String selectedEmails() {
         int selectedPos = jTable1.getSelectedRow();
         String selectedMail = receiveEmail.fromAddresses.get(receiveEmail.arrayMessages.length - selectedPos - 1);
         return selectedMail;
     }
     
+    // stores and returns all the relevant data about the email the user wants to open and read
     protected String[] whichEmailToRead() throws IOException, MessagingException {
         String[] emailDetails = new String[5];
         int selectedEmail = jTable1.getSelectedRow();
@@ -418,8 +442,13 @@ public class EmailInboxFrame extends javax.swing.JFrame {
         
     }
     
+    // getter method for which message to read
     protected Message getMessage() {
         return message;
+    }
+    
+    protected void openFolder() {
+        
     }
     
     /**
@@ -453,15 +482,15 @@ public class EmailInboxFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
+    private javax.swing.JButton deleteMailButton;
     private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
+    private javax.swing.JButton logOutButton;
+    private javax.swing.JButton mainMenuButton;
+    private javax.swing.JButton openEmailButton;
+    private javax.swing.JButton sendEmailButton;
     // End of variables declaration//GEN-END:variables
 }

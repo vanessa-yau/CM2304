@@ -23,7 +23,6 @@ public class EmailAttachmentReceiver {
     private Store store;
     private String userName;
     private String password;
-    private String input;
     protected Folder folderInbox;
     protected Message[] arrayMessages;
     protected ArrayList<String> fromAddresses;
@@ -31,6 +30,7 @@ public class EmailAttachmentReceiver {
     protected ArrayList<String> subjectArray;
     protected ArrayList<String> dateArray;
     protected ArrayList<String> attachmentArray;
+    
     // Fairly obvious here...
     public void setLoginDetails(String a, String b) {
         userName = a;
@@ -114,44 +114,49 @@ public class EmailAttachmentReceiver {
  
         // fetches new messages from server
         arrayMessages = folderInbox.getMessages();
+        
+        folderInbox.close(false);
     }
     
     // Gets all the "from" e-mail addresses in the inbox
     // stores them in an ArrayList which we can then split up and use in the table
     public void getFromAddress() throws MessagingException {
-        
+        folderInbox.open(Folder.READ_WRITE);
         fromAddresses = new ArrayList<>();
         for (Message message : arrayMessages) {
             Address[] fromAddress = message.getFrom();
             String from = fromAddress[0].toString();
             fromAddresses.add(from);
         }
+        folderInbox.close(false);
     }
     
     // Gets all the subject of the e-mails in the inbox
     // stores them in an ArrayList which we can then split up and use in the table
     public void getSubject() throws MessagingException {
-        
+        folderInbox.open(Folder.READ_WRITE);
         subjectArray = new ArrayList<>();
         for (Message message : arrayMessages) {
             String subject = message.getSubject();
             subjectArray.add(subject);
         }
+        folderInbox.close(false);
     }
     
     // Gets all the dates of the e-mails in the inbox
     // stores them in an ArrayList which we can then split up and use in the table
     public void getDate() throws MessagingException {
-        
+        folderInbox.open(Folder.READ_WRITE);
         dateArray = new ArrayList<>();
         for (Message message : arrayMessages) {
             String sentDate = message.getSentDate().toString();
             dateArray.add(sentDate);
         }
+        folderInbox.close(false);
     }
     
     public void messagesAttachment() throws MessagingException, IOException {
-        
+        folderInbox.open(Folder.READ_WRITE);
         attachmentArray = new ArrayList<>();
         for (Message message : arrayMessages) {
             String contentType = message.getContentType();
@@ -167,13 +172,13 @@ public class EmailAttachmentReceiver {
                     if (partContentType.equalsIgnoreCase("APPLICATION")) {
                         // this part is attachment
                         String fileName = part.getFileName();
-                        attachFiles += fileName + ", ";
                         if (fileName.contains("/")) {
                             int cutOff = fileName.lastIndexOf("/");
                             fileName = fileName.substring(cutOff);
                         }
                         
                         fileName = "/" + fileName;
+                        attachFiles += fileName + ", ";
                     }
                 }
             
@@ -184,18 +189,25 @@ public class EmailAttachmentReceiver {
                 attachmentArray.add("");
             }
         }
+        
+        folderInbox.close(false);
     }
     
     public void deleteEmail(Message toDelete) throws MessagingException {
+        
+        folderInbox.open(Folder.READ_WRITE);
+        // instead of completely deleting, moves the message to the trash bin
         Folder trash = store.getFolder("[Gmail]/Trash");
         Message[] delete = new Message[1];
         delete[0] = toDelete;
         folderInbox.copyMessages(delete, trash);
-        //toDelete.setFlag(Flags.Flag.DELETED, true);
+        
+        folderInbox.close(false);
     }
     
+    // gets the text content of each message
     public void messagesContent() throws MessagingException, IOException {
-        
+        folderInbox.open(Folder.READ_WRITE);
         textContent = new ArrayList<>();
         for (Message message : arrayMessages) {
             
@@ -212,8 +224,11 @@ public class EmailAttachmentReceiver {
             
             textContent.add(text);
         }
+        
+        folderInbox.close(false);
     }
     
+    // a special method to deal with every type of message
     public String getText(Part p) throws MessagingException, IOException {
         if (p.isMimeType("text/*")) {
             String s = (String)p.getContent();
@@ -263,12 +278,9 @@ public class EmailAttachmentReceiver {
         return null;
     }
     
-    
-        
- 
-        // disconnect
-        //folderInbox.close(false);
-        //store.close();
+    // disconnect
+    //folderInbox.close(false);
+    //store.close();
         
     public static void main(String[] args) throws ParseException, MessagingException, IOException {
     	

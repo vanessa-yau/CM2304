@@ -7,6 +7,7 @@ import javax.mail.Multipart;
 import javax.mail.Part;
 import javax.mail.internet.MimeBodyPart;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -20,9 +21,10 @@ import javax.swing.JFileChooser;
  */
 public class ReadEmailFrame extends javax.swing.JFrame {
     
-    protected int state;
-    protected Message thisMessage;
-    private String replyTo;
+    protected byte newState; // indication of which page is next
+    protected Message thisMessage; // this message is the one selected to open up to read
+    private String replyTo; // the email address you will reply to
+    
     /**
      * Creates new form ReadEmailFrame
      */
@@ -39,7 +41,7 @@ public class ReadEmailFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton5 = new javax.swing.JButton();
+        replyButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jLabel1 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
@@ -48,20 +50,20 @@ public class ReadEmailFrame extends javax.swing.JFrame {
         jTextField1 = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
-        jButton4 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        downloadButton = new javax.swing.JButton();
+        logOutButton = new javax.swing.JButton();
+        mainMenuButton = new javax.swing.JButton();
         jTextField3 = new javax.swing.JTextField();
         jTextField4 = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
-        jButton6 = new javax.swing.JButton();
+        returnToInboxButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jButton5.setText("Reply");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        replyButton.setText("Reply");
+        replyButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                replyButtonActionPerformed(evt);
             }
         });
 
@@ -87,21 +89,21 @@ public class ReadEmailFrame extends javax.swing.JFrame {
 
         jTextField2.setEditable(false);
 
-        jButton4.setText("Download");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        downloadButton.setText("Download");
+        downloadButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                downloadButtonActionPerformed(evt);
             }
         });
 
-        jButton3.setText("Log Out");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        logOutButton.setText("Log Out");
+        logOutButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                logOutButtonActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Main Menu");
+        mainMenuButton.setText("Main Menu");
 
         jTextField3.setEditable(false);
 
@@ -109,10 +111,10 @@ public class ReadEmailFrame extends javax.swing.JFrame {
 
         jLabel6.setText("Attachments:");
 
-        jButton6.setText("Return to Inbox");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
+        returnToInboxButton.setText("Return to Inbox");
+        returnToInboxButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
+                returnToInboxButtonActionPerformed(evt);
             }
         });
 
@@ -137,25 +139,25 @@ public class ReadEmailFrame extends javax.swing.JFrame {
                                 .addComponent(jLabel4)
                                 .addGap(18, 18, 18)
                                 .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, 439, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(jButton4))
+                            .addComponent(downloadButton))
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 639, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jButton2)
+                                .addComponent(mainMenuButton)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton3))
+                                .addComponent(logOutButton))
                             .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
                                 .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 437, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(0, 0, Short.MAX_VALUE)))
                         .addGap(57, 57, 57))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(211, 211, 211)
-                        .addComponent(jButton5)
+                        .addComponent(replyButton)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton6)
+                        .addComponent(returnToInboxButton)
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -173,8 +175,8 @@ public class ReadEmailFrame extends javax.swing.JFrame {
                 .addGap(41, 41, 41)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(mainMenuButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(logOutButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -192,35 +194,37 @@ public class ReadEmailFrame extends javax.swing.JFrame {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField2)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(downloadButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(38, 38, 38)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(replyButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(returnToInboxButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(40, 40, 40))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        state = 1;
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void logOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutButtonActionPerformed
+        newState = 1;
+    }//GEN-LAST:event_logOutButtonActionPerformed
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
-        state = 2;
-    }//GEN-LAST:event_jButton6ActionPerformed
+    private void returnToInboxButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnToInboxButtonActionPerformed
+        newState = 3;
+    }//GEN-LAST:event_returnToInboxButtonActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    private void replyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_replyButtonActionPerformed
+        // get the email address in the "from" text field
         replyTo = jTextField3.getText();
-        state = 3;
-    }//GEN-LAST:event_jButton5ActionPerformed
+        newState = 5;
+    }//GEN-LAST:event_replyButtonActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void downloadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadButtonActionPerformed
         String saveAt = "";
         
+        // allow the user to select where to save the file(s)
         JFileChooser chooser = new JFileChooser();
         chooser.setDialogTitle("Select target directory");
         chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -230,13 +234,18 @@ public class ReadEmailFrame extends javax.swing.JFrame {
         }
         
         try {
+            // if everything is in order then download the file
             downloadAttachment(saveAt);
         } 
         
         catch (IOException | MessagingException ex) {
             Logger.getLogger(ReadEmailFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }//GEN-LAST:event_jButton4ActionPerformed
+        
+        JOptionPane.showMessageDialog(new LoginGUI(), 
+                    "File has been downloaded", 
+                    "Attachment", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_downloadButtonActionPerformed
 
     /**
      * @param details
@@ -244,14 +253,16 @@ public class ReadEmailFrame extends javax.swing.JFrame {
     
     public void fillDetails(String[] details) {
         
+        // when opening the window, set the text fields with the appropriate data
         jTextField3.setText(details[0]);
         jTextField1.setText(details[1]);
         jTextField4.setText(details[2]);
         jTextField2.setText(details[3]);
         jTextArea1.setText(details[4]);
         
+        // no need for a download button if there are no attachments
         if (jTextField2.getText().equals("")) {
-            jButton4.setEnabled(false);
+            downloadButton.setEnabled(false);
         }
         
     }
@@ -274,6 +285,7 @@ public class ReadEmailFrame extends javax.swing.JFrame {
                 else {
                     fileName = "/" + fileName;
                 }
+                
                 part.saveFile(saveDirectory + fileName);
                 System.out.println(saveDirectory + fileName);
             }
@@ -316,11 +328,7 @@ public class ReadEmailFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
+    private javax.swing.JButton downloadButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -332,5 +340,9 @@ public class ReadEmailFrame extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField2;
     private javax.swing.JTextField jTextField3;
     private javax.swing.JTextField jTextField4;
+    private javax.swing.JButton logOutButton;
+    private javax.swing.JButton mainMenuButton;
+    private javax.swing.JButton replyButton;
+    private javax.swing.JButton returnToInboxButton;
     // End of variables declaration//GEN-END:variables
 }

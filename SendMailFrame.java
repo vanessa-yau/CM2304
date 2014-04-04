@@ -17,7 +17,7 @@ public class SendMailFrame extends javax.swing.JFrame {
      * Creates new form SendMailFrame
      */
     
-    protected int state;
+    protected byte newState;
     private SendMailTLS sendMail;
     
     public SendMailFrame() {
@@ -34,20 +34,20 @@ public class SendMailFrame extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
-        jButton3 = new javax.swing.JButton();
+        returnToInboxButton = new javax.swing.JButton();
+        mainMenuButton = new javax.swing.JButton();
+        logOutButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jComboBox1 = new javax.swing.JComboBox();
         jLabel3 = new javax.swing.JLabel();
         jTextField1 = new javax.swing.JTextField();
         jLabel4 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
-        jButton4 = new javax.swing.JButton();
+        attachButton = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTextArea1 = new javax.swing.JTextArea();
-        jButton5 = new javax.swing.JButton();
+        sendButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setBounds(new java.awt.Rectangle(0, 0, 800, 600));
@@ -56,19 +56,19 @@ public class SendMailFrame extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Lucida Grande", 1, 24)); // NOI18N
         jLabel1.setText("Send E-Mail");
 
-        jButton1.setText("Return to Inbox");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        returnToInboxButton.setText("Return to Inbox");
+        returnToInboxButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                returnToInboxButtonActionPerformed(evt);
             }
         });
 
-        jButton2.setText("Main Menu");
+        mainMenuButton.setText("Main Menu");
 
-        jButton3.setText("Log Out");
-        jButton3.addActionListener(new java.awt.event.ActionListener() {
+        logOutButton.setText("Log Out");
+        logOutButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton3ActionPerformed(evt);
+                logOutButtonActionPerformed(evt);
             }
         });
 
@@ -83,10 +83,10 @@ public class SendMailFrame extends javax.swing.JFrame {
 
         jTextField2.setEditable(false);
 
-        jButton4.setText("Attach");
-        jButton4.addActionListener(new java.awt.event.ActionListener() {
+        attachButton.setText("Choose File");
+        attachButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton4ActionPerformed(evt);
+                attachButtonActionPerformed(evt);
             }
         });
 
@@ -97,10 +97,10 @@ public class SendMailFrame extends javax.swing.JFrame {
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
 
-        jButton5.setText("Send");
-        jButton5.addActionListener(new java.awt.event.ActionListener() {
+        sendButton.setText("Send");
+        sendButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton5ActionPerformed(evt);
+                sendButtonActionPerformed(evt);
             }
         });
 
@@ -121,22 +121,22 @@ public class SendMailFrame extends javax.swing.JFrame {
                                 .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(0, 255, Short.MAX_VALUE)
-                                .addComponent(jButton1)
+                                .addComponent(returnToInboxButton)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton2)
+                                .addComponent(mainMenuButton)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton3))
+                                .addComponent(logOutButton))
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(jTextField2)
                                 .addGap(18, 18, 18)
-                                .addComponent(jButton4)))
+                                .addComponent(attachButton)))
                         .addGap(57, 57, 57))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel4)
                             .addComponent(jLabel5)
                             .addComponent(jLabel3)
-                            .addComponent(jButton5))
+                            .addComponent(sendButton))
                         .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addGroup(layout.createSequentialGroup()
                 .addGap(34, 34, 34)
@@ -149,9 +149,9 @@ public class SendMailFrame extends javax.swing.JFrame {
                 .addGap(41, 41, 41)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(returnToInboxButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(mainMenuButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(logOutButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(24, 24, 24)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
@@ -165,33 +165,35 @@ public class SendMailFrame extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField2)
-                    .addComponent(jButton4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(attachButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(18, 18, 18)
                 .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 181, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(sendButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGap(38, 38, 38))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
-        state = 1;
-    }//GEN-LAST:event_jButton3ActionPerformed
+    private void logOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutButtonActionPerformed
+        newState = -1;
+    }//GEN-LAST:event_logOutButtonActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        state = 2;
-    }//GEN-LAST:event_jButton1ActionPerformed
+    private void returnToInboxButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnToInboxButtonActionPerformed
+        newState = 3;
+    }//GEN-LAST:event_returnToInboxButtonActionPerformed
 
-    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+    private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
+        // creates pointer to SendMailTLS to get functionality
         sendMail = new SendMailTLS();
-        state = 3;
-    }//GEN-LAST:event_jButton5ActionPerformed
+        newState = 4;
+    }//GEN-LAST:event_sendButtonActionPerformed
 
-    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+    private void attachButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_attachButtonActionPerformed
+        // allow user to choose which file to attach
         JFileChooser chooser = new JFileChooser();
         String newAttachment = "";
         chooser.setDialogTitle("Select target directory");
@@ -200,24 +202,33 @@ public class SendMailFrame extends javax.swing.JFrame {
             newAttachment = chooser.getSelectedFile().getPath();
         } 
         
+        // don't want user to directly edit the attachments field
+        // downside is that using the application, user can only send one attachment at a time
+        // given more time could add this
         jTextField2.setEditable(true);
         jTextField2.setText(newAttachment);
         jTextField2.setEditable(false);
-    }//GEN-LAST:event_jButton4ActionPerformed
+        
+        JOptionPane.showMessageDialog(new LoginGUI(), 
+                    "File has been attached", 
+                    "Attachment", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_attachButtonActionPerformed
     
     private void setComboBoxOption() {
+        // sets the combo box to all the staff in the staff.txt file
         alyCode staff = new alyCode();
         staff.getAllStaffNameEmail();
         
         for (String[] staffNameEmail : staff.staffNameEmail) {
-            String first = staffNameEmail[0];
-            String last = staffNameEmail[1];
+            String last = staffNameEmail[0];
+            String first = staffNameEmail[1];
             String email = staffNameEmail[2];
-            jComboBox1.addItem(first + " " + last + " - " + email);
+            jComboBox1.addItem(last + ", " + first + " - " + email);
         }
     }
     
     public boolean sendingMail(String from, String password){ 
+        // retrive all relevant data required for sending email
         String attachment = jTextField2.getText();
         String whoTo = jComboBox1.getSelectedItem().toString();
         int dashLocation = whoTo.lastIndexOf(" ");
@@ -226,31 +237,29 @@ public class SendMailFrame extends javax.swing.JFrame {
         String subject = jTextField1.getText();
         String content = jTextArea1.getText();
         
+        // check if user has entered a subject
         if (subject.equals("")) {
             int result = JOptionPane.showConfirmDialog(null, 
                     "Are you sure you don't want a subject?", null, JOptionPane.YES_NO_OPTION);
-            if(result == JOptionPane.YES_OPTION) {
-                sendMail.sendEmail(from, password, whoTo, attachment, subject, content);
-                return true;
-            }
-            
-            else {
+            if(result != JOptionPane.YES_OPTION) {
                 return false;
             }
         }
         
+        // check if user has a message
         if (content.equals("")) {
             int result = JOptionPane.showConfirmDialog(null, 
                     "Are you sure you don't want any text?", null, JOptionPane.YES_NO_OPTION);
-            if(result == JOptionPane.YES_OPTION) {
-                sendMail.sendEmail(from, password, whoTo, attachment, subject, content);
-                return true;
-            }
-            
-            else {
+            if(result != JOptionPane.YES_OPTION) {
                 return false;
             }
         }
+        
+        sendMail.sendEmail(from, password, whoTo, attachment, subject, content);
+        
+        JOptionPane.showMessageDialog(new LoginGUI(), 
+                    "Email has been sent", 
+                    "Success", JOptionPane.INFORMATION_MESSAGE);
         
         return true;
     }
@@ -285,11 +294,7 @@ public class SendMailFrame extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
-    private javax.swing.JButton jButton3;
-    private javax.swing.JButton jButton4;
-    private javax.swing.JButton jButton5;
+    private javax.swing.JButton attachButton;
     private javax.swing.JComboBox jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -300,5 +305,9 @@ public class SendMailFrame extends javax.swing.JFrame {
     private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
+    private javax.swing.JButton logOutButton;
+    private javax.swing.JButton mainMenuButton;
+    private javax.swing.JButton returnToInboxButton;
+    private javax.swing.JButton sendButton;
     // End of variables declaration//GEN-END:variables
 }

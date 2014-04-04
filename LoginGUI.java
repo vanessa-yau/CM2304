@@ -72,7 +72,6 @@ public class LoginGUI extends javax.swing.JFrame {
                 password = temp2;
                 
                 active = false;
-                //dispose();
             }
             
             public String getUserName (){
