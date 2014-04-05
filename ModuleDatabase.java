@@ -1,3 +1,5 @@
+package personal;
+
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
@@ -22,9 +24,11 @@ public class ModuleDatabase extends Database
 	 * @param numExams String Number of exams
 	 * @param moduleLeader String Leader of the module
 	 * @param weighting String module weighting 
+	 * @param moduleTerm String either autumn/spring
 	 * @return boolean Returns true if the module was successfully inserted and false otherwise
 	 */
-	public boolean insertModule(String moduleName, String moduleCode, String moduleCredits, String numCoursework, String numExams, String moduleLeader, String weighting)
+	public boolean insertModule(String moduleName, String moduleCode, String moduleCredits, String numCoursework,
+			String numExams, String moduleLeader, String weighting, String moduleTerm)
 	{
 		fileReader.close();
 
@@ -37,7 +41,13 @@ public class ModuleDatabase extends Database
 		{
 			e.printStackTrace();
 		}
-		fileWriter.println(moduleName+","+moduleCode+","+moduleCredits+","+numCoursework+","+numExams+","+moduleLeader+","+weighting+";");
+		
+		if(moduleTerm.equals(""))
+		{
+			moduleTerm = "autumn";
+		}
+		
+		fileWriter.println(moduleName+","+moduleCode+","+moduleCredits+","+numCoursework+","+numExams+","+moduleLeader+","+weighting+","+moduleTerm+";");
 		fileWriter.close();
 
 		resetFileReader();
@@ -84,6 +94,10 @@ public class ModuleDatabase extends Database
 		else if(searchAttribute.compareToIgnoreCase("weighting") == 0)
 		{
 			attribute = 6;
+		}
+		else if(searchAttribute.compareToIgnoreCase("module term") == 0)
+		{
+			attribute = 7;
 		}
 
 
@@ -284,6 +298,20 @@ public class ModuleDatabase extends Database
 	}
 
 	/*
+	 * Gets the term for a module from the database if the search term matches the search attribute
+	 * eg. module name = Group Project
+	 * 
+	 * @param searchAttribute String The attribute you're searching
+	 * @param searchValue String The value you're searching the attribute for
+	 * @return String Returns the form type and "" if not found
+	 */
+	public String getModuleTerm(String searchAttribute, String searchValue)
+	{
+		String[] moduleInfo = getModule(searchAttribute, searchValue);
+		return moduleInfo[7];
+	}
+	
+	/*
 	 * Gets all module information from the database if the search term matches the search attribute
 	 * eg. module name = Group Project
 	 * 
@@ -291,11 +319,11 @@ public class ModuleDatabase extends Database
 	 * @param searchValue String The value you're searching the attribute for
 	 * @return String[] Returns an array of strings containing the information if found or strings of "" if not found
 	 * [0] = module name; [1] = module code; [2] = credits; [3] = num coursework; [4] = num exams
-	 * [5] = module leader; [6] = weighting
+	 * [5] = module leader; [6] = weighting; [7] = module term;
 	 */
 	public String[] getModule(String searchAttribute, String searchValue)
 	{
-		String[] module = new String[7];
+		String[] module = new String[8];
 
 		int attribute = 0;
 
@@ -326,6 +354,10 @@ public class ModuleDatabase extends Database
 		else if(searchAttribute.compareToIgnoreCase("weighting") == 0)
 		{
 			attribute = 6;
+		}
+		else if(searchAttribute.compareToIgnoreCase("module term") == 0)
+		{
+			attribute = 7;
 		}
 
 		boolean found = false;
@@ -367,7 +399,7 @@ public class ModuleDatabase extends Database
 
 		if(!found)
 		{
-			for(int i=0; i < 7; i++)
+			for(int i=0; i < 8; i++)
 				module[i] = "";
 		}
 

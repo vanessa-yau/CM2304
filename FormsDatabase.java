@@ -1,13 +1,14 @@
-import java.io.BufferedInputStream;
+package personal;
+
 import java.io.BufferedWriter;
-import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
 import java.io.PrintWriter;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.io.UnsupportedEncodingException;
 
 
 public class FormsDatabase extends Database
@@ -47,7 +48,6 @@ public class FormsDatabase extends Database
 	public int countForms(String moduleCode){
 		try
 		{
-			System.out.println("starts getAllForms method");
 			int totalLineCount = countFileLines("forms.txt");
 			int numForms = 0;
 			for( int i=0; i<totalLineCount; i++ )
@@ -58,7 +58,6 @@ public class FormsDatabase extends Database
 				}
 			}
 			fileReader.close();
-			System.out.println("not crashed yet...");
 			
 			resetFileReader();
 			
@@ -87,33 +86,35 @@ public class FormsDatabase extends Database
 	{
 		try
 		{
+			int lineNo = 0;
 			int numForms = countForms(moduleCode);
-			System.out.println( numForms );
 			String[][] moduleForms = new String[numForms][12];
 			for( int i=0; i<countFileLines("forms.txt"); i++ )
 			{
 				String line = fileReader.nextLine();
-				//System.out.println("nothing");
-				if ( line.contains(moduleCode)){
+				
+				if ( line.contains(moduleCode))
+				{
 					String[] parts = line.split(",");
 					
-					moduleForms[i][0] = parts[0];
-					moduleForms[i][1] = parts[1];
-					moduleForms[i][2] = parts[2];
-					moduleForms[i][3] = parts[3];
-					moduleForms[i][4] = parts[4];
-					moduleForms[i][5] = parts[5];
-					moduleForms[i][6] = parts[6];
-					moduleForms[i][7] = parts[7];
-					moduleForms[i][8] = parts[8];
-					moduleForms[i][9] = parts[9];
-					moduleForms[i][10] = parts[10];
-					moduleForms[i][11] = parts[11].substring(0, parts[11].length()-1);
+					moduleForms[lineNo][0] = parts[0];
+					moduleForms[lineNo][1] = parts[1];
+					moduleForms[lineNo][2] = parts[2];
+					moduleForms[lineNo][3] = parts[3];
+					moduleForms[lineNo][4] = parts[4];
+					moduleForms[lineNo][5] = parts[5];
+					moduleForms[lineNo][6] = parts[6];
+					moduleForms[lineNo][7] = parts[7];
+					moduleForms[lineNo][8] = parts[8];
+					moduleForms[lineNo][9] = parts[9];
+					moduleForms[lineNo][10] = parts[10];
+					moduleForms[lineNo][11] = parts[11].substring(0, parts[11].length()-1);
 					
+					lineNo++;
 				}
 			}
 			fileReader.close();
-			System.out.println("forms table saved");
+			
 			resetFileReader();
 			
 			return moduleForms;
@@ -264,16 +265,6 @@ public class FormsDatabase extends Database
 			e.printStackTrace();
 			return false;
 		}
-		
-		entry.replace(';', ',');
-		
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-		Date date = new Date();
-		
-		
-		entry += dateFormat.format(date);
-		entry += ";";
-		
 		fileWriter.println(entry);
 		fileWriter.close();
 		return true;
@@ -495,4 +486,5 @@ public class FormsDatabase extends Database
 		String[] moduleInfo = getAssessmentPapers(searchAttribute, searchValue);
 		return moduleInfo[7];
 	}
+	
 }
