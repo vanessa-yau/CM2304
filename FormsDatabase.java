@@ -9,6 +9,9 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 
 public class FormsDatabase extends Database
@@ -42,8 +45,6 @@ public class FormsDatabase extends Database
 			is.close();
 		}
 	}
-
-
 
 	public int countForms(String moduleCode){
 		try
@@ -80,7 +81,8 @@ public class FormsDatabase extends Database
 	 * 
 	 * [0] moduleCode; [1] paperName; [2] ELODeadline; [3] EMDeadline;
 	 * [4] MLDeadline; [5] IMDeadline; [6] EM_ID; [7] IM_ID;
-	 * [8] ELOCompleted; [9] EMCompleted; [10] MLCompleted; [11] IMCompleted
+	 * [8] ELOCompleted; [9] EMCompleted; [10] MLCompleted; [11] IMCompleted;
+	 * [12] PW_ID; [13] PWDeadline; [14] PWCompleted;
 	 */
 	public String[][] getModuleForms(String moduleCode)
 	{
@@ -88,7 +90,7 @@ public class FormsDatabase extends Database
 		{
 			int lineNo = 0;
 			int numForms = countForms(moduleCode);
-			String[][] moduleForms = new String[numForms][12];
+			String[][] moduleForms = new String[numForms][15];
 			for( int i=0; i<countFileLines("forms.txt"); i++ )
 			{
 				String line = fileReader.nextLine();
@@ -97,18 +99,11 @@ public class FormsDatabase extends Database
 				{
 					String[] parts = line.split(",");
 					
-					moduleForms[lineNo][0] = parts[0];
-					moduleForms[lineNo][1] = parts[1];
-					moduleForms[lineNo][2] = parts[2];
-					moduleForms[lineNo][3] = parts[3];
-					moduleForms[lineNo][4] = parts[4];
-					moduleForms[lineNo][5] = parts[5];
-					moduleForms[lineNo][6] = parts[6];
-					moduleForms[lineNo][7] = parts[7];
-					moduleForms[lineNo][8] = parts[8];
-					moduleForms[lineNo][9] = parts[9];
-					moduleForms[lineNo][10] = parts[10];
-					moduleForms[lineNo][11] = parts[11].substring(0, parts[11].length()-1);
+					for( int j=0 ; j<14 ; j++ )
+					{
+						moduleForms[lineNo][j] = parts[j];
+					}
+					moduleForms[lineNo][14] = parts[14].substring(0, parts[14].length()-1);
 					
 					lineNo++;
 				}
@@ -142,11 +137,15 @@ public class FormsDatabase extends Database
 	 * @param EMCompleted String Recording of whether EM has completed their task
 	 * @param MLCompleted String Recording of whether ML has completed their task
 	 * @param IMCompleted String Recording of whether IM has completed their task
+	 * @param PW_ID String The Paper Author ID
+	 * @param PWDeadline String PaperWritten Deadline
+	 * @param PWCompleted String Recording of whether Paper Author has completed their task 
 	 * @returns boolean Returns true if the form was inserted correctly
 	 */
 	public boolean insertAssessmentPaper(String moduleCode, String paperName, String ELODeadline,
 			String EMDeadline, String MLDeadline, String IMDeadline, String EM_ID, String IM_ID,
-			String ELOCompleted, String EMCompleted, String MLCompleted, String IMCompleted)
+			String ELOCompleted, String EMCompleted, String MLCompleted, String IMCompleted,
+			String PW_ID, String PWDeadline, String PWCompleted)
 	{
 		fileReader.close();
 
@@ -161,7 +160,8 @@ public class FormsDatabase extends Database
 		}
 		fileWriter.println(moduleCode+","+paperName+","+ELODeadline+","+EMDeadline+
 				","+MLDeadline+","+IMDeadline+","+EM_ID+","+IM_ID+
-				","+ELOCompleted+","+EMCompleted+","+MLCompleted+","+IMCompleted+";");
+				","+ELOCompleted+","+EMCompleted+","+MLCompleted+","+IMCompleted+
+				","+PW_ID+","+PWDeadline+","+PWCompleted+";");
 		fileWriter.close();
 
 		resetFileReader();
@@ -265,6 +265,17 @@ public class FormsDatabase extends Database
 			e.printStackTrace();
 			return false;
 		}
+		
+		entry.replace(';', ',');
+		
+		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		Date date = new Date();
+		
+		
+		entry += dateFormat.format(date);
+		entry += ";";
+		
+		
 		fileWriter.println(entry);
 		fileWriter.close();
 		return true;
@@ -273,7 +284,7 @@ public class FormsDatabase extends Database
 	//DOES ANYONE EVEN USE THIS?
 	public String[] getAssessmentPapers(String searchAttribute, String searchValue)
 	{
-		String[] module = new String[12];
+		String[] module = new String[15];
 
 		int attribute = 0;
 
@@ -309,21 +320,33 @@ public class FormsDatabase extends Database
 		{
 			attribute = 7;
 		}
-		else if(searchAttribute.compareToIgnoreCase("EM deadline") == 0)
+		else if(searchAttribute.compareToIgnoreCase("ELO completed") == 0)
 		{
 			attribute = 8;
 		}
-		else if(searchAttribute.compareToIgnoreCase("ML deadline") == 0)
+		else if(searchAttribute.compareToIgnoreCase("EM completed") == 0)
 		{
 			attribute = 9;
 		}
-		else if(searchAttribute.compareToIgnoreCase("IM deadline") == 0)
+		else if(searchAttribute.compareToIgnoreCase("ML completed") == 0)
 		{
 			attribute = 10;
 		}
-		else if(searchAttribute.compareToIgnoreCase("EM ID") == 0)
+		else if(searchAttribute.compareToIgnoreCase("IM completed") == 0)
 		{
 			attribute = 11;
+		}
+		else if(searchAttribute.compareToIgnoreCase("PW ID") == 0)
+		{
+			attribute = 12;
+		}
+		else if(searchAttribute.compareToIgnoreCase("PW deadline") == 0)
+		{
+			attribute = 13;
+		}
+		else if(searchAttribute.compareToIgnoreCase("PW completed") == 0)
+		{
+			attribute = 14;
 		}
 
 
@@ -366,7 +389,7 @@ public class FormsDatabase extends Database
 
 		if(!found)
 		{
-			for(int i=0; i < 8; i++)
+			for(int i=0; i < 15; i++)
 				module[i] = "";
 		}
 
