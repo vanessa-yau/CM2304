@@ -1,0 +1,3 @@
+Simon,Titcomb,LOLNOPE@nah.com,02345 678986,inID001,internal;
+Aly,Sheriff,kingtut@pharoahpower.com,02222 111111,inID002,internal;
+Mez,Gangbanger,kingofrape@ianwatkins.com,03333 678987,exID001,external;

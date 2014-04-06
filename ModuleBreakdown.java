@@ -111,8 +111,8 @@ public class ModuleBreakdown extends javax.swing.JFrame
 
 	public ModuleBreakdown(String mCode) 
 	{
-		//module_code = mCode;
-		module_code = "cm2300";
+		module_code = mCode;
+		//module_code = "cm2300";
 		
 		// retrieve and sort information from text files
 		mTemp.retrieveStaff();
@@ -442,7 +442,6 @@ public class ModuleBreakdown extends javax.swing.JFrame
 		
 	}
 	
-	
 	private void initComponents() 
 	{
 		
@@ -517,8 +516,7 @@ public class ModuleBreakdown extends javax.swing.JFrame
 		modLeaderLbl = new javax.swing.JLabel();
 		modLeaderLbl.setText("Module Leader:");
 		
-		modLeaderComboBox = new javax.swing.JComboBox();
-		modLeaderComboBox.setModel(new javax.swing.DefaultComboBoxModel(inStaffNames));
+		modLeaderComboBox = new javax.swing.JComboBox<String>(inStaffNames);
 		modLeaderComboBox.addActionListener(new ActionListener() 
 		{
 			public void actionPerformed(ActionEvent e){
@@ -529,8 +527,7 @@ public class ModuleBreakdown extends javax.swing.JFrame
 		assessmentPaperLbl = new javax.swing.JLabel();
 		assessmentPaperLbl.setText("Assessment Paper:");
 		
-		assessmentPaperComboBox = new javax.swing.JComboBox();
-		assessmentPaperComboBox.setModel(new javax.swing.DefaultComboBoxModel(paperNames));
+		assessmentPaperComboBox = new javax.swing.JComboBox<String>(paperNames);
 		
 		// default Table
 		formTableModel = new javax.swing.table.DefaultTableModel(
