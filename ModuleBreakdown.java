@@ -53,7 +53,7 @@ public class ModuleBreakdown extends javax.swing.JFrame
 	
 	private DefaultTableModel formTableModel;
 	
-	byte nextState;
+	protected byte nextState;
 	// End of variables declaration
 
 	public static void main(String args[]) 
@@ -112,7 +112,6 @@ public class ModuleBreakdown extends javax.swing.JFrame
 	public ModuleBreakdown(String mCode) 
 	{
 		module_code = mCode;
-		//module_code = "cm2300";
 		
 		// retrieve and sort information from text files
 		mTemp.retrieveStaff();
