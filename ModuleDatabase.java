@@ -407,6 +407,58 @@ public class ModuleDatabase extends Database
 	}
 	
 	/*
+	 * Returns all modules recorded in the file
+	 * 
+	 * @returns String[][] Returns all module entries in a file
+	 */
+	public String[][] getAllModules(){
+		
+		String[][] allModules = null;
+		int lineCount = 0;
+		
+		
+		while(fileReader.hasNext())
+		{
+
+			lineCount++;
+			fileReader.nextLine();
+
+		}
+		
+		
+		allModules = new String[lineCount][8];
+		
+		resetFileReader();
+		
+		int count = 0;
+		while(fileReader.hasNext())
+		{
+			String line = fileReader.nextLine();
+			int attribute = 0;
+			String value = "";
+			
+			for(int i=0; i < line.length(); i++)
+			{
+				if(line.charAt(i) == ',' || line.charAt(i) == ';' )
+				{
+					allModules[count][attribute] = value;
+					attribute++;
+					value = "";
+				}
+				else
+				{
+					 value += line.charAt(i);
+				}
+			}
+			
+			count++;
+		}
+		
+		return allModules;
+	
+	}
+	
+	/*
 	 * Archives a module by writing the entry into an archive file
 	 * 
 	 * @param entry String Module entry to input into the file

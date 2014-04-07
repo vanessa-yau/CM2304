@@ -121,6 +121,58 @@ public class FormsDatabase extends Database
 	}
 
 	/*
+	 * Returns all forms recorded in the file
+	 * 
+	 * @returns String[][] Returns all form entries in a file
+	 */
+	public String[][] getAllForms(){
+	
+		String[][] allForms = null;
+		int lineCount = 0;
+		
+		
+		while(fileReader.hasNext())
+		{
+
+			lineCount++;
+			fileReader.nextLine();
+
+		}
+		
+		
+		allForms = new String[lineCount][15];
+		
+		resetFileReader();
+		
+		int count = 0;
+		while(fileReader.hasNext())
+		{
+			String line = fileReader.nextLine();
+			int attribute = 0;
+			String value = "";
+			
+			for(int i=0; i < line.length(); i++)
+			{
+				if(line.charAt(i) == ',' || line.charAt(i) == ';' )
+				{
+					allForms[count][attribute] = value;
+					attribute++;
+					value = "";
+				}
+				else
+				{
+					 value += line.charAt(i);
+				}
+			}
+			
+			count++;
+		}
+		
+		return allForms;
+	
+	}
+	
+	/*
 	 * Inserts a new form into the database
 	 * 
 	 * @param moduleCode String Module code of the form
