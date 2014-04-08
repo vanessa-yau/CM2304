@@ -85,11 +85,13 @@ public class SendMailTLS {
             
             // Part two is attachment  
             if (!"".equals(fileAttachment)) {
-            	messageBodyPart = new MimeBodyPart();  
-            	DataSource source = new FileDataSource(fileAttachment);  
-            	messageBodyPart.setDataHandler(new DataHandler(source));  
-            	messageBodyPart.setFileName(fileAttachment);  
-            	multipart.addBodyPart(messageBodyPart);
+                for (int i = 0; i < fileAttachment.length(); i++) {
+                    if (fileAttachment.charAt(i) == ',') {
+                        String file = fileAttachment.substring(0, i);
+                        fileAttachment = fileAttachment.substring(i + 1);
+                        addAttachment(multipart, file);
+                    }
+                }
             }
             
             // Put parts in message  
@@ -103,11 +105,19 @@ public class SendMailTLS {
 			throw new RuntimeException(e);
 		}
 	}
+        
+        private static void addAttachment(Multipart multipart, String filename) throws MessagingException {
+            MimeBodyPart messageBodyPart = new MimeBodyPart();  
+            DataSource source = new FileDataSource(filename);
+            messageBodyPart.setDataHandler(new DataHandler(source));
+            messageBodyPart.setFileName(filename);
+            multipart.addBodyPart(messageBodyPart);
+        }
 	
 	public static void main(String[] args) {
                 
             SendMailTLS sendThis = new SendMailTLS();
-		sendThis.sendEmail("chickentika99@gmail.com", "password97", "chickentika99@gmail.com", "",
+		sendThis.sendEmail("chickentika99@gmail.com", "password97", "simon.titcomb@ntlworld.com", "",
 				"Pyramids", "They are awesome, yah?");
 		
 		//sendEmail("Abdelfattah-ElmakhzanguiAS@cardiff.ac.uk", "********", "chickentika99@gmail.com", "",

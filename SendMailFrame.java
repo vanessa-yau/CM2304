@@ -18,6 +18,7 @@ public class SendMailFrame extends javax.swing.JFrame {
      */
     
     protected byte nextState;
+    protected int state;
     private SendMailTLS sendMail;
     
     public SendMailFrame() {
@@ -180,16 +181,19 @@ public class SendMailFrame extends javax.swing.JFrame {
 
     private void logOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutButtonActionPerformed
         nextState = -1;
+        state = 1;
     }//GEN-LAST:event_logOutButtonActionPerformed
 
     private void returnToInboxButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnToInboxButtonActionPerformed
         nextState = 3;
+        state = 2;
     }//GEN-LAST:event_returnToInboxButtonActionPerformed
 
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
         // creates pointer to SendMailTLS to get functionality
         sendMail = new SendMailTLS();
         nextState = 4;
+        state = 3;
     }//GEN-LAST:event_sendButtonActionPerformed
 
     private void attachButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_attachButtonActionPerformed
@@ -205,9 +209,8 @@ public class SendMailFrame extends javax.swing.JFrame {
         // don't want user to directly edit the attachments field
         // downside is that using the application, user can only send one attachment at a time
         // given more time could add this
-        jTextField2.setEditable(true);
-        jTextField2.setText(newAttachment);
-        jTextField2.setEditable(false);
+        String currentAttached = jTextField2.getText();
+        jTextField2.setText(currentAttached + newAttachment + ",");
         
         JOptionPane.showMessageDialog(new LoginGUI(), 
                     "File has been attached", 
