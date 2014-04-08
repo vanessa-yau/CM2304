@@ -438,7 +438,21 @@ public class EmailInboxFrame extends javax.swing.JFrame {
         emailDetails[0] = receiveEmail.fromAddresses.get(receiveEmail.arrayMessages.length - selectedEmail - 1);
         emailDetails[1] = receiveEmail.subjectArray.get(receiveEmail.arrayMessages.length - selectedEmail - 1);
         emailDetails[2] = receiveEmail.dateArray.get(receiveEmail.arrayMessages.length - selectedEmail - 1);
-        emailDetails[3] = receiveEmail.attachmentArray.get(receiveEmail.arrayMessages.length - selectedEmail - 1);
+        
+        String attachment = receiveEmail.attachmentArray.get(receiveEmail.arrayMessages.length - selectedEmail - 1);
+        String toAttach = "";
+        for (int j = 0; j < attachment.length(); j++) {
+            if (attachment.charAt(j) == ',') {
+                String temp = attachment.substring(0, j);
+                if (temp.contains("/")) {
+                    int cutOff = temp.lastIndexOf("/");
+                    temp = temp.substring(cutOff + 1);
+                    toAttach += temp + ",";
+                }
+            }
+        }
+            
+        emailDetails[3] = toAttach;
         emailDetails[4] = receiveEmail.textContent.get(receiveEmail.arrayMessages.length - selectedEmail - 1);
         
         message = receiveEmail.arrayMessages[receiveEmail.arrayMessages.length - selectedEmail - 1];
