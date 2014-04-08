@@ -19,6 +19,7 @@ import javax.swing.JOptionPane;
 public class EmailInboxFrame extends javax.swing.JFrame {
     
     protected byte nextState; // indication of which page is next
+    protected int state;
     protected Message message; // this message is the one selected to open up to read
     private EmailAttachmentReceiver receiveEmail; // a pointer to EmailAttachmentReceiver, allows for increased functionality
 
@@ -292,6 +293,7 @@ public class EmailInboxFrame extends javax.swing.JFrame {
         // can only select 1 row at a time, and only rows with values in them
         if (jTable1.getValueAt(selectedMail, 0) != null && numberSelected == 1) {
             nextState = 4;
+            state = 2;
         }
         
         else {
@@ -313,6 +315,7 @@ public class EmailInboxFrame extends javax.swing.JFrame {
         // can only select 1 row at a time, and only rows with values in them
         if (jTable1.getValueAt(selectedMail, 0) != null && numberSelected == 1) {
             nextState = 5;
+            state = 3;
         }
         
         else {
@@ -325,6 +328,7 @@ public class EmailInboxFrame extends javax.swing.JFrame {
     private void logOutHandler(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutHandler
         // tell main area to log out
         nextState = -1;
+        state = 1;
     }//GEN-LAST:event_logOutHandler
 
     private void deleteMailButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deleteMailButtonActionPerformed
@@ -385,12 +389,20 @@ public class EmailInboxFrame extends javax.swing.JFrame {
             
             // make attachments neater by removing path
             String attachment = receiveEmail.attachmentArray.get(i);
-            if (attachment.contains("/")) {
-                int cutOff = attachment.lastIndexOf("/");
-                attachment = attachment.substring(cutOff + 1);
+            String toAttach = "";
+            for (int j = 0; j < attachment.length(); j++) {
+                if (attachment.charAt(j) == ',') {
+                    String temp = attachment.substring(0, j);
+                    if (temp.contains("/")) {
+                        int cutOff = temp.lastIndexOf("/");
+                        temp = temp.substring(cutOff + 1);
+                        toAttach += temp + ",";
+                    }
+                }
             }
             
-            jTable1.setValueAt(attachment, count, 3);
+            
+            jTable1.setValueAt(toAttach, count, 3);
             
             // count-- allows the emails to be presented in order of newest to oldest
             count--;
@@ -426,14 +438,7 @@ public class EmailInboxFrame extends javax.swing.JFrame {
         emailDetails[0] = receiveEmail.fromAddresses.get(receiveEmail.arrayMessages.length - selectedEmail - 1);
         emailDetails[1] = receiveEmail.subjectArray.get(receiveEmail.arrayMessages.length - selectedEmail - 1);
         emailDetails[2] = receiveEmail.dateArray.get(receiveEmail.arrayMessages.length - selectedEmail - 1);
-        
-        String thisAttachment = receiveEmail.attachmentArray.get(receiveEmail.arrayMessages.length - selectedEmail - 1);
-        if (thisAttachment.contains("/")) {
-            int cutOff = thisAttachment.lastIndexOf("/");
-            thisAttachment = thisAttachment.substring(cutOff + 1);
-        }
-        
-        emailDetails[3] = thisAttachment;
+        emailDetails[3] = receiveEmail.attachmentArray.get(receiveEmail.arrayMessages.length - selectedEmail - 1);
         emailDetails[4] = receiveEmail.textContent.get(receiveEmail.arrayMessages.length - selectedEmail - 1);
         
         message = receiveEmail.arrayMessages[receiveEmail.arrayMessages.length - selectedEmail - 1];
@@ -447,8 +452,8 @@ public class EmailInboxFrame extends javax.swing.JFrame {
         return message;
     }
     
-    protected void openFolder() {
-        
+    protected EmailAttachmentReceiver getEmailInstance() {
+        return receiveEmail;
     }
     
     /**

@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -22,6 +23,8 @@ import javax.swing.JOptionPane;
 public class ReadEmailFrame extends javax.swing.JFrame {
     
     protected byte nextState; // indication of which page is next
+    protected int state;
+    protected EmailAttachmentReceiver receiveEmail;
     protected Message thisMessage; // this message is the one selected to open up to read
     private String replyTo; // the email address you will reply to
     
@@ -208,17 +211,20 @@ public class ReadEmailFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void logOutButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_logOutButtonActionPerformed
-        nextState = 1;
+        nextState = -1;
+        state = 1;
     }//GEN-LAST:event_logOutButtonActionPerformed
 
     private void returnToInboxButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_returnToInboxButtonActionPerformed
         nextState = 3;
+        state = 2;
     }//GEN-LAST:event_returnToInboxButtonActionPerformed
 
     private void replyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_replyButtonActionPerformed
         // get the email address in the "from" text field
         replyTo = jTextField3.getText();
         nextState = 5;
+        state = 3;
     }//GEN-LAST:event_replyButtonActionPerformed
 
     private void downloadButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadButtonActionPerformed
@@ -269,6 +275,8 @@ public class ReadEmailFrame extends javax.swing.JFrame {
     
     protected void downloadAttachment(String saveDirectory) throws IOException, MessagingException {
         // content may contain attachments
+        
+        receiveEmail.folderInbox.open(Folder.READ_WRITE);
         Multipart multiPart = (Multipart) thisMessage.getContent();
         int numberOfParts = multiPart.getCount();
         for (int partCount = 0; partCount < numberOfParts; partCount++) {
@@ -290,6 +298,8 @@ public class ReadEmailFrame extends javax.swing.JFrame {
                 System.out.println(saveDirectory + fileName);
             }
         }
+        
+        receiveEmail.folderInbox.close(false);
     }
     
     protected String getRecipient() {
@@ -298,6 +308,10 @@ public class ReadEmailFrame extends javax.swing.JFrame {
     
     protected void setMessage(Message message) {
         thisMessage = message;
+    }
+    
+    protected void setEmailReceiver(EmailAttachmentReceiver email) {
+        receiveEmail = email;
     }
     
     public static void main(String args[]) {
