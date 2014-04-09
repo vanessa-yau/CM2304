@@ -6,7 +6,7 @@
  *@author Letsibogo Ramadi
  */
 
-
+package msettings;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -19,20 +19,24 @@ public class LoginSecurity {
     
     public LoginSecurity() { }
    
-    public static String encrypt(String password) {
-        byte[] encrypted = null;
+    /*returns the two encrypted parameters separated by a comma*/
+    public static String encrypt(String username,String password) {
+        byte[] encryptedPass = null;
+        byte[] encryptedUsername = null;
         try {
            MessageDigest md = MessageDigest.getInstance("SHA-1");
-           encrypted =  md.digest(password.getBytes("UTF-8"));
+           encryptedPass =  md.digest(password.getBytes("UTF-8"));
+           encryptedUsername = md.digest(username.getBytes("UTF-8"));
         }
         catch(NoSuchAlgorithmException e) {
             e.printStackTrace();
         } catch (UnsupportedEncodingException ex) {
             Logger.getLogger(LoginSecurity.class.getName()).log(Level.SEVERE, null, ex);
         } 
-        System.out.println(byte2HexString(encrypted));
-        return byte2HexString(encrypted);
-}
+        String credentials = byte2HexString(encryptedUsername) + "," +byte2HexString(encryptedPass);
+        System.out.println(credentials);
+        return credentials;
+    }
     
     /*to convert the encrypted password to a string so that it can be stored in the file */
     public static String byte2HexString(byte[] b) {
@@ -41,16 +45,18 @@ public class LoginSecurity {
             result += Integer.toString( ( b[i] & 0xff ) + 0x100, 16).substring( 1 );
         }
         return result;
-}
+    }
     
-    public static  boolean authenticate(String checkUsername, String checkPassword, String existing_username, String existing_pass){
+ 
+    /*tests if the username and password match existing details*/
+    public static  boolean authenticate(String checkUsername, String checkPassword, String existing_details){
         boolean authenticated = false;    
 
         if (checkUsername == null || checkPassword == null){               
             authenticated = false;
         }else{
-            String check = encrypt(checkPassword);
-            if(existing_pass.compareTo(check) == 0 && existing_username.compareTo(checkUsername) == 0){
+            String check = encrypt(checkUsername, checkPassword);
+            if(existing_details.compareTo(check) == 0){
                 authenticated = true;
             }
         } 
@@ -59,24 +65,25 @@ public class LoginSecurity {
     }
 
     
-    
+   
     public static void main(String[] args) throws NoSuchAlgorithmException{
-        String uName = "letsibogo";//set this to username in the file
-        String uPass = "e2c35061f278e5c4a0e182789ac4b247c503b80f";//set this to the encrypted password in the file
+        //hardcoded here but should be set to the credentials in the user file 
+        String existing = "6fc061f07af31f3b38c2dc00c4df9f740b707b6d,e2c35061f278e5c4a0e182789ac4b247c503b80f";
         
-        String chekUser = "letsibogo";//this would be entered username
-        String chekPass = "ramadi";//entered pass     
+        String chekUser = "letsibogo";//set this to entered username
+        String chekPass = "ramadi";//set this to entered password     
+        
         
         //TEST LOGIN
         
-       if(authenticate(chekUser,chekPass,uName,uPass )){
+       if(authenticate(chekUser,chekPass,existing)){
            System.out.println("LOGIN SUCCESS!!");
            //initialise main area/main menu here
        }else{
            System.out.println("LOGIN FAILED!!");
            //do something to show login failed, e.g: pop up message
            //then give them 2 more chances to enter details
-       }   
+       }  
         
     }
 
