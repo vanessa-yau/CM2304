@@ -1,6 +1,5 @@
 
 
-
 package msettings;
 
 /**
@@ -1178,9 +1177,8 @@ public class msettingsUI extends javax.swing.JFrame {
     
     /**Fills the table with data from text file based database*/
     public final void populateTable() {
-        //open the database and get the staff table
-        StaffDatabase sdb = new StaffDatabase();
-        File staff = sdb.getStaffTable();
+                
+        File staff = new File("staff.txt");
 
         DefaultTableModel tm = (DefaultTableModel) StaffTable.getModel();
         //refreshes table when new data is added
@@ -1192,7 +1190,7 @@ public class msettingsUI extends javax.swing.JFrame {
             String line;//an entry in the database
 
             while ((line = br.readLine()) != null) {
-                tm.addRow(line.split(","));
+                tm.addRow(line.split(",|;"));
             }
             br.close();
 
@@ -1250,8 +1248,7 @@ public class msettingsUI extends javax.swing.JFrame {
     
     public void deleteEntryFromDatabase() {
 
-        StaffDatabase sdb = new StaffDatabase();
-        File staff = sdb.getStaffTable();
+        File staff = new File("staff.txt");
         File tempFile = new File("temp.txt");
         
         int rows = StaffTable.getRowCount();
