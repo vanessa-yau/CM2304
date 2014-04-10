@@ -20,6 +20,7 @@ public class LoginGUI extends javax.swing.JFrame {
     public LoginGUI() {
         initComponents();
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -71,13 +72,23 @@ public class LoginGUI extends javax.swing.JFrame {
                 username = jTextField1.getText();
                 password = temp2;
                 
-                active = false;
+                LoginSecurity lg = new LoginSecurity();
+                String check = lg.encrypt(username, password);
+                
+                if (lg.authenticate(username, password, check)) {
+                    active = false;
+                }
+                
+                else {
+                    System.out.println("No");
+                    active = true;
+                }
+                
             }
             
             public String getUserName (){
                 return username;
             }
-            //public 
         });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
