@@ -18,6 +18,7 @@ public class SendMailFrame extends javax.swing.JFrame {
      */
     
     protected byte nextState;
+    protected boolean sendMiniState = false;
     protected int state;
     private SendMailTLS sendMail;
     
@@ -65,6 +66,11 @@ public class SendMailFrame extends javax.swing.JFrame {
         });
 
         mainMenuButton.setText("Main Menu");
+        mainMenuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mainMenuButtonActionPerformed(evt);
+            }
+        });
 
         logOutButton.setText("Log Out");
         logOutButton.addActionListener(new java.awt.event.ActionListener() {
@@ -192,7 +198,8 @@ public class SendMailFrame extends javax.swing.JFrame {
     private void sendButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendButtonActionPerformed
         // creates pointer to SendMailTLS to get functionality
         sendMail = new SendMailTLS();
-        nextState = 4;
+        sendMiniState = true;
+        nextState = 3;
         state = 3;
     }//GEN-LAST:event_sendButtonActionPerformed
 
@@ -216,6 +223,10 @@ public class SendMailFrame extends javax.swing.JFrame {
                     "File has been attached", 
                     "Attachment", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_attachButtonActionPerformed
+
+    private void mainMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainMenuButtonActionPerformed
+        nextState = 1;
+    }//GEN-LAST:event_mainMenuButtonActionPerformed
     
     private void setComboBoxOption() {
         // sets the combo box to all the staff in the staff.txt file
