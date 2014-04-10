@@ -25,32 +25,21 @@ public class ModuleDatabase extends Database
 	 * @param moduleTerm String either autumn/spring
 	 * @return boolean Returns true if the module was successfully inserted and false otherwise
 	 */
-	public boolean insertModule(String moduleName, String moduleCode, String moduleCredits, String numCoursework,
-			String numExams, String moduleLeader, String weighting, String moduleTerm)
-	{
-		fileReader.close();
+	 public void insertModule(String moduleName, String moduleCode, String moduleCredits, String numCoursework, String numExams, String moduleLeader, String weighting, String moduleTerm)
+	 {
+		BufferedWriter newModule;
 
-		PrintWriter fileWriter = null;
 		try 
 		{
-			fileWriter = new PrintWriter(new BufferedWriter(new FileWriter(filePath, true)));
-		} 
+                    newModule = new BufferedWriter(new FileWriter(filePath, true));                    
+                    newModule.write(moduleName+","+moduleCode+","+moduleCredits+","+numCoursework+","+numExams+","+moduleLeader+","+weighting+","+moduleTerm+"; \n");
+                    newModule.close();
+         	} 
 		catch (IOException e) 
 		{
-			e.printStackTrace();
+                    System.out.println("Error : Problem adding new module to database");
 		}
-		
-		if(moduleTerm.equals(""))
-		{
-			moduleTerm = "autumn";
-		}
-		
-		fileWriter.println(moduleName+","+moduleCode+","+moduleCredits+","+numCoursework+","+numExams+","+moduleLeader+","+weighting+","+moduleTerm+";");
-		fileWriter.close();
-
-		resetFileReader();
-		return true;
-	}
+	 }
 
 	/*
 	 * Deletes module from the database if the search term matches the search attribute
