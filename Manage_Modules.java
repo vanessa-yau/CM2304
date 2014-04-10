@@ -1,3 +1,11 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ *@author Letsibogo Ramadi
+ */
+
+
 package windows;
 
 import java.awt.Color;
@@ -87,14 +95,14 @@ public class Manage_Modules extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Module Title", "Module Code", "Credits", "Courseworks", "Exams", "Module Leader"
+                "Module Title", "Module Code", "Credits", "Courseworks", "Exams", "Module Leader", "Weighting"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class
+                java.lang.String.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.Object.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -121,6 +129,7 @@ public class Manage_Modules extends javax.swing.JFrame {
             modTable.getColumnModel().getColumn(4).setPreferredWidth(20);
         }
 
+        editModuleButton.setToolTipText("click to modify module details");
         editModuleButton.setText("Edit Module Details");
         editModuleButton.setPreferredSize(new java.awt.Dimension(180, 25));
         editModuleButton.addActionListener(new java.awt.event.ActionListener() {
@@ -129,7 +138,7 @@ public class Manage_Modules extends javax.swing.JFrame {
             }
         });
 
-        addModuleButton.setToolTipText("click to add a new moderator");
+        addModuleButton.setToolTipText("click to add a new module");
         addModuleButton.setText("Add Module");
         addModuleButton.setPreferredSize(new java.awt.Dimension(180, 25));
         addModuleButton.addActionListener(new java.awt.event.ActionListener() {
@@ -139,6 +148,7 @@ public class Manage_Modules extends javax.swing.JFrame {
         });
 
         archModButton.setText("Archive Module");
+        archModButton.setToolTipText("click to remove module from database");
         archModButton.setName(""); // NOI18N
         archModButton.setPreferredSize(new java.awt.Dimension(180, 25));
         archModButton.addActionListener(new java.awt.event.ActionListener() {
@@ -163,6 +173,7 @@ public class Manage_Modules extends javax.swing.JFrame {
         });
 
         openModuleButton.setText("Open Module");
+        openModuleButton.setToolTipText("click to view module in further detail");
         openModuleButton.setPreferredSize(new java.awt.Dimension(180, 25));
         openModuleButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
