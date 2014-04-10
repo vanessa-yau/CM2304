@@ -9,6 +9,7 @@ package windows;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Arrays;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
@@ -26,7 +27,7 @@ public class EditModule extends javax.swing.JDialog {
     EditModule(ArrayList arr) {
        initComponents();
        myInitComponents();
-       
+       System.out.println("Array size = "+arr.size());
        modTitle = (String)arr.get(0);
        modTitleTextField.setText(modTitle);
        
@@ -36,19 +37,21 @@ public class EditModule extends javax.swing.JDialog {
        modCredits = (String) arr.get(2);
        creditsTextField.setText(String.valueOf(modCredits));
        
-       exams = (String) arr.get(3);
-       numExamsTextfield.setText(String.valueOf(exams));
-       
-       courseworks = (String) arr.get(4);
+       courseworks = (String) arr.get(3);
        numCWTextfield.setText(String.valueOf(courseworks));
+       
+       
+       exams = (String) arr.get(4);
+       numExamsTextfield.setText(String.valueOf(exams));
        
        modLeader = (String)arr.get(5);
        modLeaderTextfield.setText(modLeader);
        
        weighting =  (String) arr.get(6);
-       weightTextField.setText("set new value");
+       weightTextField.setText(weighting);
        
-      
+      //set input validation flags to true 
+        Arrays.fill(flags, true);
     }
 
    
@@ -455,7 +458,7 @@ public class EditModule extends javax.swing.JDialog {
     } 
     
      
-//####################################################END OF BACKEND##############################################
+//#############################################################################################################
     
   
     // Variables declaration - do not modify                     
