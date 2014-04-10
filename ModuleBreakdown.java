@@ -424,14 +424,10 @@ public class ModuleBreakdown extends javax.swing.JFrame
 		String nameSelected = (String)modLeaderComboBox.getSelectedItem();
 		String staffID = mTemp.getStaffID(nameSelected,internalStaff);
 		
-		/*System.out.println("SAVE NEW MOD LEADER METHOD ###START");
-		System.out.println("OLD MODULE LEADER ID: "+moduleInfo[5]);
-		System.out.println("staffID: "+staffID+"\n");*/
 		if( !moduleInfo[5].equals(staffID) )
 		{
 		
 			moduleInfo[5] = staffID;
-			/*System.out.println("NEW MODULE LEADER ID: "+moduleInfo[5]);*/
 		
 		}
 		
@@ -446,7 +442,6 @@ public class ModuleBreakdown extends javax.swing.JFrame
 		
 		JOptionPane.showMessageDialog(null, nameSelected+" has been saved as new Module Leader",
 				"Module Changed", JOptionPane.INFORMATION_MESSAGE);
-		/*System.out.println("SAVE NEW MOD LEADER METHOD ###END");*/
 		
 		return;
 		
@@ -454,8 +449,6 @@ public class ModuleBreakdown extends javax.swing.JFrame
 	
 	private void setExistingModuleLeader()
 	{
-		
-		System.out.println("BEFORE: INTERNAL STAFF LIST[0]:"+internalStaff[0][0]+","+internalStaff[0][1]);
 		
 		int arrLocation = 0;
 		String[] leaderInfo = new String[2];
@@ -465,11 +458,11 @@ public class ModuleBreakdown extends javax.swing.JFrame
 		{
 			if( currentLeaderID.equals(internalStaff[i][0]) )
 			{
-				System.out.println("currID: "+currentLeaderID+","+internalStaff[i][0]);
+				
 				arrLocation = i;
 				leaderInfo[0] = internalStaff[i][0];
 				leaderInfo[1] = internalStaff[i][1];
-				System.out.println("leaderinfo: "+leaderInfo[0]+","+leaderInfo[1]);
+				
 			}
 			
 		}
@@ -486,12 +479,6 @@ public class ModuleBreakdown extends javax.swing.JFrame
 		
 		inStaffNames[0] = internalStaff[0][1];
 		inStaffNames[arrLocation] = internalStaff[arrLocation][1];
- 		
-		
-		System.out.println("FIRST LOCATION IN LIST: "+internalStaff[0][0]+","+internalStaff[0][1]);
-		System.out.println("MOVED LOCATION: "+arrLocation+","+internalStaff[arrLocation][0]+","+internalStaff[arrLocation][1]);
-		
-		System.out.println("AFTER: INTERNAL STAFF LIST[0]:"+internalStaff[0][0]+","+internalStaff[0][1]);
 		
 	}
 	
