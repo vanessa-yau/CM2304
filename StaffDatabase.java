@@ -28,21 +28,21 @@ public class StaffDatabase extends Database
 	 * @param staffID Object Staff ID object
 	 * @param staffType String Staff type
 	 */
-	public final void insertStaff(String lName, String fName, String email, String number, Object staffID , String staffType)
+	 public final void insertStaff(String fName, String lName,String email , String number, Object staffID , String staffType)
 	{
 		BufferedWriter newStaff;
-
+		
 		try 
 		{
-			newStaff = new BufferedWriter(new FileWriter(staffTable, true));                    
-			newStaff.write(lName+","+fName+","+email+","+number+","+staffID+","+staffType+ "\n");
-			newStaff.close();
-		} 
+                    newStaff = new BufferedWriter(new FileWriter(filePath, true));                    
+                    newStaff.write(fName+","+lName+","+email+","+number+","+staffID+","+staffType+ "; \n");
+                    newStaff.close();
+         	} 
 		catch (IOException e) 
 		{
-			System.out.println("Error : Problem adding new user to database");
+                    System.out.println("Error : Problem adding new user to database");
 		}
-	}
+         }
          
         
 	/*
