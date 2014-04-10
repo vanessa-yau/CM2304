@@ -8,6 +8,7 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.Calendar;
+
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -37,7 +38,7 @@ public class ModuleBreakdown extends javax.swing.JFrame
 	private javax.swing.Box.Filler filler1;
 	// assessment paper specific variables
 	private javax.swing.JLabel assessmentPaperLbl;
-	private javax.swing.JComboBox assessmentPaperComboBox;
+	private javax.swing.JComboBox<String> assessmentPaperComboBox;
 	private javax.swing.JButton openFormButton;
 	private javax.swing.JScrollPane formTableScrollPane1;
 	private javax.swing.JTable formTable;
@@ -49,11 +50,11 @@ public class ModuleBreakdown extends javax.swing.JFrame
 	private javax.swing.JLabel modNameLbl, modNameValue;
 	private javax.swing.JLabel modCodeLbl, modCodeValue;
 	private javax.swing.JLabel modLeaderLbl;
-	private javax.swing.JComboBox modLeaderComboBox;
+	private javax.swing.JComboBox<String> modLeaderComboBox;
 	
 	private DefaultTableModel formTableModel;
 	
-	protected byte nextState;
+	byte nextState;
 	// End of variables declaration
 
 	public static void main(String args[]) 
@@ -112,6 +113,7 @@ public class ModuleBreakdown extends javax.swing.JFrame
 	public ModuleBreakdown(String mCode) 
 	{
 		module_code = mCode;
+		//module_code = "cm2300";
 		
 		// retrieve and sort information from text files
 		mTemp.retrieveStaff();
@@ -121,6 +123,8 @@ public class ModuleBreakdown extends javax.swing.JFrame
 		
 		retrieveModule();
 		paperNames = mTemp.getFormNames(module_code, moduleInfo);
+		
+		setExistingModuleLeader();
 		
 		// initialise and display window
 		initComponents();
@@ -140,7 +144,6 @@ public class ModuleBreakdown extends javax.swing.JFrame
 	{
 		
 		if( displayWindowExitMessage() == true ) nextState = -1;
-		else return;
 		
 	}
 	
@@ -419,15 +422,21 @@ public class ModuleBreakdown extends javax.swing.JFrame
 	{
 	
 		String nameSelected = (String)modLeaderComboBox.getSelectedItem();
-		if( !moduleInfo[5].equals(nameSelected) )
+		String staffID = mTemp.getStaffID(nameSelected,internalStaff);
+		
+		/*System.out.println("SAVE NEW MOD LEADER METHOD ###START");
+		System.out.println("OLD MODULE LEADER ID: "+moduleInfo[5]);
+		System.out.println("staffID: "+staffID+"\n");*/
+		if( !moduleInfo[5].equals(staffID) )
 		{
 		
-			moduleInfo[5] = nameSelected;
+			moduleInfo[5] = staffID;
+			/*System.out.println("NEW MODULE LEADER ID: "+moduleInfo[5]);*/
 		
 		}
 		
 		ModuleDatabase md = new ModuleDatabase();
-		md.initDatabase("archivestaff.txt");
+		md.initDatabase("modules.txt");
 		
 		md.deleteModule("module code",module_code);
 		md.insertModule(moduleInfo[0],moduleInfo[1],moduleInfo[2],
@@ -437,7 +446,52 @@ public class ModuleBreakdown extends javax.swing.JFrame
 		
 		JOptionPane.showMessageDialog(null, nameSelected+" has been saved as new Module Leader",
 				"Module Changed", JOptionPane.INFORMATION_MESSAGE);
+		/*System.out.println("SAVE NEW MOD LEADER METHOD ###END");*/
+		
 		return;
+		
+	}
+	
+	private void setExistingModuleLeader()
+	{
+		
+		System.out.println("BEFORE: INTERNAL STAFF LIST[0]:"+internalStaff[0][0]+","+internalStaff[0][1]);
+		
+		int arrLocation = 0;
+		String[] leaderInfo = new String[2];
+		String currentLeaderID = moduleInfo[5];
+		// get current leader details from table.
+		for( int i=0 ; i<internalStaff.length ; i++ )
+		{
+			if( currentLeaderID.equals(internalStaff[i][0]) )
+			{
+				System.out.println("currID: "+currentLeaderID+","+internalStaff[i][0]);
+				arrLocation = i;
+				leaderInfo[0] = internalStaff[i][0];
+				leaderInfo[1] = internalStaff[i][1];
+				System.out.println("leaderinfo: "+leaderInfo[0]+","+leaderInfo[1]);
+			}
+			
+		}
+		
+		String[] temp = new String[2];
+		temp[0] = internalStaff[0][0];
+		temp[1] = internalStaff[0][1];
+		
+		internalStaff[0][0] = leaderInfo[0];
+		internalStaff[0][1] = leaderInfo[1];
+		
+		internalStaff[arrLocation][0] = temp[0];
+		internalStaff[arrLocation][1] = temp[1];
+		
+		inStaffNames[0] = internalStaff[0][1];
+		inStaffNames[arrLocation] = internalStaff[arrLocation][1];
+ 		
+		
+		System.out.println("FIRST LOCATION IN LIST: "+internalStaff[0][0]+","+internalStaff[0][1]);
+		System.out.println("MOVED LOCATION: "+arrLocation+","+internalStaff[arrLocation][0]+","+internalStaff[arrLocation][1]);
+		
+		System.out.println("AFTER: INTERNAL STAFF LIST[0]:"+internalStaff[0][0]+","+internalStaff[0][1]);
 		
 	}
 	
