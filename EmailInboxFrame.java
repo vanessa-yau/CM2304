@@ -86,6 +86,11 @@ public class EmailInboxFrame extends javax.swing.JFrame {
         });
 
         mainMenuButton.setText("Main Menu");
+        mainMenuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mainMenuButtonActionPerformed(evt);
+            }
+        });
 
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -363,6 +368,10 @@ public class EmailInboxFrame extends javax.swing.JFrame {
         
         jTable1.updateUI();
     }//GEN-LAST:event_deleteMailButtonActionPerformed
+
+    private void mainMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainMenuButtonActionPerformed
+        nextState = 1;
+    }//GEN-LAST:event_mainMenuButtonActionPerformed
     
     protected void emailInput() throws IOException {
 

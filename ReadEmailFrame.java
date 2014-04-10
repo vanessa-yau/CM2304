@@ -107,6 +107,11 @@ public class ReadEmailFrame extends javax.swing.JFrame {
         });
 
         mainMenuButton.setText("Main Menu");
+        mainMenuButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                mainMenuButtonActionPerformed(evt);
+            }
+        });
 
         jTextField3.setEditable(false);
 
@@ -223,7 +228,7 @@ public class ReadEmailFrame extends javax.swing.JFrame {
     private void replyButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_replyButtonActionPerformed
         // get the email address in the "from" text field
         replyTo = jTextField3.getText();
-        nextState = 5;
+        nextState = 4;
         state = 3;
     }//GEN-LAST:event_replyButtonActionPerformed
 
@@ -252,6 +257,10 @@ public class ReadEmailFrame extends javax.swing.JFrame {
                     "File has been downloaded", 
                     "Attachment", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_downloadButtonActionPerformed
+
+    private void mainMenuButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_mainMenuButtonActionPerformed
+        nextState = 1;
+    }//GEN-LAST:event_mainMenuButtonActionPerformed
 
     /**
      * @param details
